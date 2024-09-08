@@ -1,7 +1,7 @@
 ---
-title: "Writing a great story for data science projects"
-subtitle: "This is a Report Template"
-author: "Students names (Advisor: Dr. Cohen)"
+title: "Cross Validation"
+#subtitle: "This is a Report Template"
+author: " Mounika Chevva (Advisor: Dr. Seals)"
 date: '`r Sys.Date()`'
 format:
   html:
@@ -18,134 +18,31 @@ editor:
     wrap: 72
 ---
 
-Slides: [slides.html](slides.html){target="_blank"} ( Go to `slides.qmd`
-to edit)
 
-::: callout-important
-**Remember:** Your goal is to make your audience understand and care
-about your findings. By crafting a compelling story, you can effectively
-communicate the value of your data science project.
+## Summary
 
-Carefully read this template since it has instructions and tips to
-writing!
-:::
+## Note 1 [ @domingo2022cross ]
 
-## Introduction
+The paper "Cross Validation Voting for Improving CNN Classification in Grocery Products" presents a method to enhance the performance of convolutional neural networks (CNNs) in classifying grocery products. Without implementing numerous classifier types, the authors present Cross-Validation-Voting (CVV), a method that takes the benefit of ensemble learning and cross-validation. To ensure that every model is optimized for a distinct validation set, CVV leverages multiple instances of the same classifier to train on different subsets of data. By doing so, the models' capacity for generalization is enhanced and overfitting is lessened.
 
-The introduction should:
+The efficacy of CVV is demonstrated in the study through trials on a popular grocery stores product dataset, where CVV surpasses the state-of-the-art techniques in terms of F1-score, accuracy, and precision. By training models with fewer epochs and not appreciably extending the training duration, the CVV technique produces better outcomes. Additionally, the method is flexible to other CNN concepts and can be modified to apply to other classifier types, such as SVM and boosting approaches.
 
--   Develop a storyline that captures attention and maintains interest.
+## Note 2 [ @yates2023cross ]
 
--   Your audience is your peers
+The article "Cross Validation for Model Selection: A Review with Examples from Ecology" by Luke A. Yates et al. provides a comprehensive review of cross-validation techniques for model selection in ecological research. 
+The authors highlight the importance of cross-validation, a data-splitting method, for assessing and contrasting statistical models, particularly in situations when it is difficult to determine the model's likelihood or when parameter counting is difficult. Technical details that are frequently missed in the ecological literature are brought to light in this review, including estimating uncertainty, risk of overfitting, and bias correction.
 
--   Clearly state the problem or question you're addressing.
+When there are fewer than ten folds (k), the authors advise utilizing k-fold cross-validation with bias correction or leave-one-out cross-validation (LOO-CV) in order to reduce bias. They also advocate for the selection of the simplest model that performs similarly to the best-scoring model, and they present a modified one-standard-error criteria to mitigate overfitting. With the help of two ecological case studies, the paper illustrates how to apply these methodologies and offers helpful advice. The paper concludes by highlighting the significance of predictive evaluation in model selection for a range of modeling objectives, such as hypothesis testing, exploration, and prediction, and by warning against forming biased conclusions after model selection.
 
-<!-- -->
+## Note 3 [ @qi2019estimating ]
 
--   Introduce why it is relevant needs.
+The paper "On Estimating Model in Feature Selection With Cross-Validation" investigates the effectiveness of different cross-validation (CV) methods for model evaluation during feature selection. The study examines five CV methods: leave-one-out (LOO), repeated 2-fold CV, repeated 5-fold CV, repeated 10-fold CV, and a nested 10-fold CV. It focuses on the hybrid feature selection algorithm FDHSFFS. The study tests the accuracy of error estimation, computational efficiency, and the choice of best models and feature subsets using four UCI datasets with different feature dimensions and sample subsets.
 
--   Provide an overview of your approach.
+It includes the lowest errors produced with the least computational expense on low-dimensional datasets by 2-fold CV and LOO. Nested CV and 10-fold CV are computationally demanding yet yield more accurate error estimates on high-dimensional datasets. Though different CV techniques may use different optimal models, they frequently provide roughly the same optimal feature subsets. The nested 10-fold CV approach strikes a balance between computing cost and accuracy by achieving almost unbiased error estimation.
 
-Example of writing including citing references:
 
-*This is an introduction to ..... regression, which is a non-parametric
-estimator that estimates the conditional expectation of two variables
-which is random. The goal of a kernel regression is to discover the
-non-linear relationship between two random variables. To discover the
-non-linear relationship, kernel estimator or kernel smoothing is the
-main method to estimate the curve for non-parametric statistics. In
-kernel estimator, weight function is known as kernel function
-[@efr2008]. Cite this paper [@bro2014principal]. The GEE [@wang2014].
-The PCA [@daffertshofer2004pca]*
 
-*This is my work and I want to add more work...*
 
-## Methods
 
--   Detail the models or algorithms used.
-
--   Justify your choices based on the problem and data.
-
-*The common non-parametric regression model is*
-$Y_i = m(X_i) + \varepsilon_i$*, where* $Y_i$ *can be defined as the sum
-of the regression function value* $m(x)$ *for* $X_i$*. Here* $m(x)$ *is
-unknown and* $\varepsilon_i$ *some errors. With the help of this
-definition, we can create the estimation for local averaging i.e.*
-$m(x)$ *can be estimated with the product of* $Y_i$ *average and* $X_i$
-*is near to* $x$*. In other words, this means that we are discovering
-the line through the data points with the help of surrounding data
-points. The estimation formula is printed below [@R-base]:*
-
-$$
-M_n(x) = \sum_{i=1}^{n} W_n (X_i) Y_i  \tag{1}
-$$$W_n(x)$ *is the sum of weights that belongs to all real numbers.
-Weights are positive numbers and small if* $X_i$ *is far from* $x$*.*
-
-*Another equation:*
-
-$$
-y_i = \beta_0 + \beta_1 X_1 +\varepsilon_i
-$$
-
-## Analysis and Results
-
-### Data Exploration and Visualization
-
--   Describe your data sources and collection process.
-
--   Present initial findings and insights through visualizations.
-
--   Highlight unexpected patterns or anomalies.
-
-A study was conducted to determine how...
-
-```{r, warning=FALSE, echo=T, message=FALSE}
-# loading packages 
-library(tidyverse)
-library(knitr)
-library(ggthemes)
-library(ggrepel)
-library(dslabs)
-```
-
-```{r, warning=FALSE, echo=TRUE}
-# Load Data
-kable(head(murders))
-
-ggplot1 = murders %>% ggplot(mapping = aes(x=population/10^6, y=total)) 
-
-  ggplot1 + geom_point(aes(col=region), size = 4) +
-  geom_text_repel(aes(label=abb)) +
-  scale_x_log10() +
-  scale_y_log10() +
-  geom_smooth(formula = "y~x", method=lm,se = F)+
-  xlab("Populations in millions (log10 scale)") + 
-  ylab("Total number of murders (log10 scale)") +
-  ggtitle("US Gun Murders in 2010") +
-  scale_color_discrete(name = "Region")+
-      theme_bw()
-  
-
-```
-
-### Modeling and Results
-
--   Explain your data preprocessing and cleaning steps.
-
--   Present your key findings in a clear and concise manner.
-
--   Use visuals to support your claims.
-
--   **Tell a story about what the data reveals.**
-
-```{r}
-
-```
-
-### Conclusion
-
--   Summarize your key findings.
-
--   Discuss the implications of your results.
 
 ## References
