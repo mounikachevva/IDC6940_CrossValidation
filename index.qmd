@@ -5,7 +5,7 @@ date: " 09/08/2024"
 format:
   html:
     code-fold: true
-course: Capstone Projects in Data Science
+course: IDC6490 Capstone in Data Science
 bibliography: references.bib # file contains bibtex for references
 #always_allow_html: true # this allows to get PDF with HTML features
 self-contained: true
