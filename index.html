@@ -6,7 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Mounika Chevva (Advisor: Dr. Seals)">
+<meta name="author" content="Mounika Chevva (Advisor: Dr. Samantha Seals)">
+<meta name="dcterms.date" content="2024-09-08">
 
 <title>Cross Validation</title>
 <style>
@@ -3072,14 +3073,14 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Author</div>
     <div class="quarto-title-meta-contents">
-             <p>Mounika Chevva (Advisor: Dr. Seals) </p>
+             <p>Mounika Chevva (Advisor: Dr. Samantha Seals) </p>
           </div>
   </div>
     
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">Invalid Date</p>
+      <p class="date">September 8, 2024</p>
     </div>
   </div>
   
@@ -3109,6 +3110,23 @@ vertical-align: -.125em;
 <p>The paper “On Estimating Model in Feature Selection With Cross-Validation” investigates the effectiveness of different cross-validation (CV) methods for model evaluation during feature selection. The study examines five CV methods: leave-one-out (LOO), repeated 2-fold CV, repeated 5-fold CV, repeated 10-fold CV, and a nested 10-fold CV. It focuses on the hybrid feature selection algorithm FDHSFFS. The study tests the accuracy of error estimation, computational efficiency, and the choice of best models and feature subsets using four UCI datasets with different feature dimensions and sample subsets.</p>
 <p>It includes the lowest errors produced with the least computational expense on low-dimensional datasets by 2-fold CV and LOO. Nested CV and 10-fold CV are computationally demanding yet yield more accurate error estimates on high-dimensional datasets. Though different CV techniques may use different optimal models, they frequently provide roughly the same optimal feature subsets. The nested 10-fold CV approach strikes a balance between computing cost and accuracy by achieving almost unbiased error estimation.</p>
 </section>
+<section id="note-4-6322811" class="level2">
+<h2 class="anchored" data-anchor-id="note-4-6322811">Note 4 <span class="citation" data-cites="6322811">(<a href="#ref-6322811" role="doc-biblioref">Lingqiao et al. 2012</a> )</span></h2>
+<p>The paper “Design and Realization of the Parallel Computing Framework of Cross-Validation” introduces Parallel-CV, a multi-threaded framework designed to enhance the efficiency of cross-validation (CV) in machine learning. Due to their reliance on serial execution, traditional CV approaches are resource-intensive and slow, especially when dealing with large datasets. In order to overcome this, Parallel-CV speeds up the procedure by dividing the workload among several CPU cores.</p>
+<p>With the help of the framework’s straightforward API and support for a number of CV techniques, like K-Fold and Leave-M-Out, users may parallelize machine learning jobs without needing to know anything about parallel programming. Parallel-CV showed notable calculation time improvements in studies with different sized datasets, particularly for larger datasets. Although efficiency marginally declines with more threads, the framework nonetheless retains scalability and assures load balancing. In general, Parallel-CV streamlines the parallelization process while providing excellent scalability, adaptability, and efficiency for cross-validation workloads.</p>
+</section>
+<section id="note-5-6098566" class="level2">
+<h2 class="anchored" data-anchor-id="note-5-6098566">Note 5 <span class="citation" data-cites="6098566">(<a href="#ref-6098566" role="doc-biblioref">Yang et al. 2011</a> )</span></h2>
+<p>The paper “Determining the Repeat Number of Cross-Validation” proposes two methods, FCI (Fixed Confidence Interval) and TSE (Two-Step Estimation), to determine the optimal number of repetitions in cross-validation (CV).</p>
+<p>A popular method for estimating classification error rates is cross-validation, especially when dealing with gene expression data. The amount of CV repetitions is typically determined empirically, which could produce inaccurate or ineffective findings. The study focuses attention to the limitations of this empirical strategy and offers more dependable techniques based on approximative confidence intervals.</p>
+<p>The number of repetitions is automatically adjusted by the FCI and TSE algorithms based on the data, folds, and classification model. By putting these techniques to the test on actual datasets, the authors discovered that they can estimate error rates with the appropriate accuracy while cutting down on pointless computations. Comparing these approaches to the fixed empirical methodology, they offer a more accurate and dynamic way to determine repeat counts. In order to increase the accuracy of error rate estimates in CV, the study highlights the necessity of adaptive approaches.</p>
+</section>
+<section id="note-6-9655795" class="level2">
+<h2 class="anchored" data-anchor-id="note-6-9655795">Note 6 <span class="citation" data-cites="9655795">(<a href="#ref-9655795" role="doc-biblioref">Mohammed et al. 2021</a> )</span></h2>
+<p>The paper “Time-Series Cross-Validation Parallel Programming using MPI” focuses on optimizing time-series cross-validation (TSCV) through parallel processing using MPI (Message Passing Interface). Time-series data is sequential in nature, which makes parallelization difficult. However, by dividing up the work among several processors, this research seeks to shorten computing times.</p>
+<p>In order to divide a dataset into training and testing sets, the article suggests a parallelized TSCV algorithm that grows the size of the training set with each run. Each processor is given a distinct workload by the algorithm, and each one builds and tests models on its own. The performance is assessed in terms of computational time, efficiency, and speed.</p>
+<p>The compute time was notably lowered by the parallelized approach, going from 28.33 seconds when using five processors to 15.47 seconds while using five processors, according to the results. However, because of workload imbalance, efficiency dropped with more processors and speedup was non-linear, peaking at 1.8 with five processors. According to its findings, parallel TSCV can save calculation time by 42% for large datasets. It draws attention to the need for more load balancing optimization and makes suggestions for looking at other parallel frameworks, such as OpenMP.</p>
+</section>
 <section id="references" class="level2 unnumbered">
 
 
@@ -3118,8 +3136,17 @@ vertical-align: -.125em;
 <div id="ref-domingo2022cross" class="csl-entry" role="listitem">
 Domingo, J. D., R. M. Aparicio, and L. M. G. Rodrigo. 2022. <span>“Cross Validation Voting for Improving CNN Classification in Grocery Products.”</span> <em>IEEE Access</em> 10: 20913–25. <a href="https://doi.org/10.1109/ACCESS.2022.3152224">https://doi.org/10.1109/ACCESS.2022.3152224</a>.
 </div>
+<div id="ref-6322811" class="csl-entry" role="listitem">
+Lingqiao, Li, Yang Huihua, He Qian, Zhao Jianbin, and Guo Tuo. 2012. <span>“Design and Realization of the Parallel Computing Framework of Cross-Validation.”</span> In <em>2012 International Conference on Industrial Control and Electronics Engineering</em>, 1957–60. <a href="https://doi.org/10.1109/ICICEE.2012.520">https://doi.org/10.1109/ICICEE.2012.520</a>.
+</div>
+<div id="ref-9655795" class="csl-entry" role="listitem">
+Mohammed, Abdulrahim, Ahmed Khedr, Duaa AlHaj, Reem Al Khalifa, and Abdulla Alqaddoumi. 2021. <span>“Time-Series Cross-Validation Parallel Programming Using MPI.”</span> In <em>2021 International Conference on Data Analytics for Business and Industry (ICDABI)</em>, 553–56. <a href="https://doi.org/10.1109/ICDABI53623.2021.9655795">https://doi.org/10.1109/ICDABI53623.2021.9655795</a>.
+</div>
 <div id="ref-qi2019estimating" class="csl-entry" role="listitem">
 Qi, C., J. Diao, and L. Qiu. 2019. <span>“On Estimating Model in Feature Selection with Cross-Validation.”</span> <em>IEEE Access</em> 7: 33454–63. <a href="https://doi.org/10.1109/ACCESS.2019.2892062">https://doi.org/10.1109/ACCESS.2019.2892062</a>.
+</div>
+<div id="ref-6098566" class="csl-entry" role="listitem">
+Yang, Kun, Haipeng Wang, Guojun Dai, Sanqing Hu, Yanbin Zhang, and Jing Xu. 2011. <span>“Determining the Repeat Number of Cross-Validation.”</span> In <em>2011 4th International Conference on Biomedical Engineering and Informatics (BMEI)</em>, 3:1706–10. <a href="https://doi.org/10.1109/BMEI.2011.6098566">https://doi.org/10.1109/BMEI.2011.6098566</a>.
 </div>
 <div id="ref-yates2023cross" class="csl-entry" role="listitem">
 Yates, L. A., Z. Aandahl, S. A. Richards, and B. W. Brook. 2023. <span>“Cross Validation for Model Selection: A Review with Examples from Ecology.”</span> <em>Ecological Monographs</em> 93 (1): e1557. <a href="https://doi.org/10.1002/ecm.1557">https://doi.org/10.1002/ecm.1557</a>.
