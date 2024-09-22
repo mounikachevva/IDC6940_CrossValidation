@@ -1,0 +1,36 @@
+---
+title: "Cross Validation"
+subtitle: "Literature Review"
+author: " Hooman, Mounika Chevva (Advisor: Dr. Seals)"
+date: '09/22/2024'
+format:
+  revealjs
+course: Capstone Projects in Data Science
+bibliography: references.bib # file contains bibtex for references
+#always_allow_html: true # this allows to get PDF with HTML features
+self-contained: true
+execute: 
+  warning: false
+  message: false
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+
+## Introduction  {.smaller}
+
+In order to assess machine learning models and guarantee their generalizability, cross-validation is necessary. In order to provide more reliable metrics for measuring model performance, the dataset is divided into separate training and testing sets.
+
+
+## Literature Review  {.smaller}
+
+
+- CNN models @domingo2022cross face challenges like overfitting and generalization issues in supermarket product classification.
+- Ensemble learning strategies such as voting, boosting, and bagging are commonly used to improve performance but often rely on single classifiers or validation sets.
+- The Cross-Validation Voting (CVV) method proposed by Duque Domingo et al. improves generalization and reduces overfitting, outperforming traditional methods in grocery classification.
+
+  
+
+
+## References
