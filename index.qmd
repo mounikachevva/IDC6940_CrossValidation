@@ -1,13 +1,11 @@
 ---
-title: "Cross Validation"
+title: "Prediction of Martensite Start Temperature in Steels Using Cross Validation"
 author: "Mounika Chevva (Advisor: Dr. Samantha Seals)"
-date: " 09/15/2024"
+date: " 10/06/2024"
 format:
   html:
     code-fold: true
 course: IDC6490 Capstone in Data Science
-bibliography: references.bib # file contains bibtex for references
-#always_allow_html: true # this allows to get PDF with HTML features
 self-contained: true
 execute: 
   warning: false
@@ -17,32 +15,137 @@ editor:
     wrap: 72
 ---
 
+#### Week 7 (full (polished) description and exploratory data analysis / visualization of the dataset chosen)
 
-## Literature Review
+```{r}
+library(readr)
 
-CNN models' shortcomings in classifying supermarket products are reviewed by Duque Domingo et al. (2022)[ @domingo2022cross ], who highlight overfitting and generalization problems. They go over ensemble learning strategies, which integrate classifiers to enhance performance, but frequently use separate classifiers or single validation sets. Examples of these techniques are voting, boosting, and bagging. In order to overcome this, Duque Domingo et al. present the Cross-Validation Voting (CVV) method, which involves training several classifier instances using several validation sets. With this approach, overfitting is decreased and model generalization is enhanced. Reviewing earlier research, it is evident from the comparison that CVV performs better in grocery classification than conventional approaches.
+Martensite <- read.csv("/Users/LaptopUser/Downloads/dataset.csv/Martensite Start-Temp.csv")
 
-
-In the study of Yates et al. (2022) [ @yates2023cross ], model selection in ecological research requires the use of cross-validation as a crucial technique. In situations where likelihoods are hard to determine or parameters are challenging to estimate, like in machine learning and mixed-effect models, the authors stress the adaptability of cross-validation procedures. Using leave-one-out cross-validation or k-fold with bias correction when k < 10 and overfitting and bias correction are common problems, Yates et al. explain why. The modified one-standard-error criterion for calibrated selection is suggested as a solution to overfitting. Specializing in useful applications such as hypothesis testing and prediction, the review brings together scattered technical literature on cross-validation and offers explicit guidelines for model selection in ecological research.
-
-
-"On Estimating Model in Feature Selection With Cross-Validation            [ @qi2019estimating ]," The application of cross-validation (CV) techniques in feature selection is reviewed by Chunxia Qi, Jiandong Diao, and Like Qiu. They review previous research and point out that techniques like k-fold CV and leave-one-out CV (LOO) are frequently applied in model evaluation. According to Kohavi (2001) and Tibshirani et al. (2002), LOO has a significant variance, especially in small datasets, even though it offers almost unbiased error estimates. It has been shown by Breiman (1992) that a 10-fold CV reliably selects the right decision tree. Qi et al. point out a flaw in applying CV to feature selection, especially in hybrid models, despite the importance of these techniques in model evaluation. In an effort to close this gap and offer guidance on feature subset selection, their study contrasts various CV techniques. 
-
-
-Li Lingqiao, Yang Huihua, He Qian, Zhao Jianbin, and Guo Tuo highlight the limitations of traditional cross-validation techniques [ @6322811 ], particularly their high computational cost when applied to large datasets. They highlight the difficulties in utilizing current parallel computing frameworks, such as LIBSVM, which are difficult to implement on multi-core CPUs and inefficient. The writers mention a number of multi-core programming models, including MPI, OpenMP, and Pthread. Despite their strength, these models are frequently too complex for everyday usage because they need manual data synchronization and thread management. The authors suggest Parallel-CV, a multi-threaded framework that makes parallelizing cross-validation methods easier, as a solution to these problems. With its user-friendly API and support for techniques like K-Fold and Leave-M-Out, the framework makes it easy for users to carry out parallel activities. Especially for large datasets, Parallel-CV increases computational efficiency and scalability without requiring extensive understanding of parallel programming.
+head(Martensite)
+str(Martensite)
 
 
-Yang et al. (2011) [ @6098566 ] explored the challenge of determining the appropriate number of repetitions for cross-validation in the classification of gene expression data.They pointed out that although cross-validation is frequently performed with an arbitrary number of repetitions to reduce variance, it is also frequently used to estimate classification error rates. The number of folds in cross-validation, the preference for a classification model, and the variability of the data can all affect how reliable this repetition number is. It is usually selected using empirical values. In response, Yang et al. introduced two techniques that automatically calculate the quantity of cross-validation repetitions required: Fixed Confidence Interval (FCI) and Two Step Estimation (TSE). These techniques use approximation confidence intervals to estimate error rates with a predetermined level of precision.Based on real data sets, experimental results showed that while traditional empirical approaches could produce estimates that were not dependable, FCI and TSE were able to generate more accurate and reliable estimates by adjusting to the features of the data and the classification model. This strategy reduces pointless computations and enhances error rate estimation, offering a more reliable and effective framework for classifying gene expression data.
+```
+
+####  Dataset Description
+
+The martensite start temperature (Ms) is a critical parameter when designing high-performance
+steels and their heat treatments.
+
+Martensite start temperature (Ms) is our target variable.
+
+This table categorizes the variables based on their type and description to our study.
 
 
-In order to achieve notable speedups in Support Vector Machine (SVM) training [ @9655795 ], Li et al. [7] suggested parallelizing the process with GPUs. Through distributing tasks among processors, the Parallel-CV framework, first presented by Lingqiao [8], streamlines the process of parallel cross-validation. Gonzalez et al. [9] found that MPI was more efficient when they used it in conjunction with OpenMP to parallelize Artificial Neural Network (ANN) training on time-series data. Sinkovits [10] achieved a 168x speedup by using OpenMP to optimize a time-series classification algorithm. The usefulness of parallel processing in cutting down on neural network cross-validation execution time was shown by Derks et al. [11]. These studies demonstrate how parallel processing can shorten calculation times and increase time-series analysis efficiency.
+```{r}
+library(knitr)
+
+var_desc <- data.frame(
+  Var = c("C", "Mn", "Si", "Cr", "Ni", "Mo", "V", "Co", "Al", 
+               "W", "Cu", "Nb", "Ti", "B", "N", "Ms"),
+  Description = c(
+    "Carbon ",
+    "Manganese ",
+    "Silicon ",
+    "Chromium ",
+    "Nickel ",
+    "Molybdenum ",
+    "Vanadium",
+    "Cobalt ",
+    "Aluminum",
+    "Tungsten ",
+    "Copper ",
+    "Niobium ",
+    "Titanium ",
+    "Boron ",
+    "Nitrogen ",
+    "Martensite Start Temperature Target Variable(°C)"
+  ),
+  Type = c(
+    "Numeric","Numeric","Numeric", "Numeric", "Numeric", "Numeric", "Numeric", "Numeric",
+   "Numeric", "Numeric", "Numeric", "Numeric", "Numeric", "Numeric", "Numeric", "Numeric"
+  ),
+  stringsAsFactors = FALSE  
+)
+
+kable(var_desc)
 
 
+```
 
 
+#### Exploratory Data Analysis (EDA)
+
+Exploratory Data Analysis (EDA) on the Martensite Start Temperature (Ms) dataset involves understanding the distribution, relationships, and patterns in the data.
+
+```{r}
+summary(Martensite)
+sum(is.na(Martensite))
+
+```
+
+The output [1] 0 from sum(is.na(Martensite)) indicates that there are no missing values (NAs) in the Martensite dataset. This means that all entries in the dataset have complete data without any gaps.
+
+### Data Visualization
+
+#### Histogram for Martensite Start Temperature 
+
+```{r}
+library(ggplot2)
+ggplot(Martensite, aes(x = Ms)) +
+  geom_histogram(binwidth = 10, fill = "blue", color = "black", alpha = 0.7) +
+  labs(title = "Distribution of Martensite Start Temperature (Ms)", x = "Martensite Start Temperature", y = "Frequency")
+```
+The histogram describes  the distribution of Martensite Start Temperature (Ms) values, ranging from 200 to 800°C. It shows a bimodal distribution with peaks around 400-450°C and 600-650°C, indicating two predominant temperature ranges. 
+
+#### Correlation matrix 
+
+The correlation matrix is a powerful tool used to visualize and quantify the relationships between key variables
+
+```{r}
+library(ggplot2)
+library(reshape2)
+library(corrplot)
+
+correlation_matrix <- cor(Martensite, use = "complete.obs")
+
+print(correlation_matrix)
+
+corrplot(correlation_matrix, method = "circle")
+```
+
+#### Insights from correlation matrix 
+
+The matrix uses color intensity to indicate the strength of the relationships between variables.
+
+Correlation coefficients displayed in the matrix range from -1 to 1, where values near ±1 indicate strong positive or negative correlations, and values near 0 indicate weak or no linear relationship.
+
+The correlations help identify significant predictors of Martensite:
+
+C (Carbon) shows a strong positive correlation with Mn (Manganese), suggesting that as carbon content increases, manganese also tends to increase.
+
+Ms (Martensite Start Temperature) has several notable negative correlations with elements like V (Vanadium), W (Tungsten), and N (Nitrogen). This implies that higher concentrations of these elements may lead to lower martensite start temperatures.
+
+The relationships identified here can be utilized to build predictive models for Ms based on the chemical composition of alloys.
+
+#### Boxplot for Ms vs Carbon (C)
+
+This boxplot graph illustrates the relationship between the Martensite Start Temperature (Ms) and Carbon content in percentage (%)
+
+```{r}
+ggplot(Martensite, aes(x = as.factor(C), y = Ms)) +
+  geom_boxplot(fill = "red") +
+  labs(title = "Boxplot of Martensite Ms vs Carbon", x = "Carbon (%)", y = "Martensite Start Temperature (Ms)")
+
+```
+
+#### Insights from the Boxplot
+
+X-axis (Carbon %): This represents the percentage of carbon content in the material. The values are spread out across a wide range, indicating different carbon concentrations.
+
+Y-axis (Martensite Start Temperature, Ms): This represents the temperature at which martensite begins to form during the cooling process. The temperature is measured in degrees Celsius.
+
+As the carbon content increases, the Ms temperature decreases. This is typical, as higher carbon content usually lowers the Ms temperature in steels and alloys.
 
 
-
-
-
-## References
