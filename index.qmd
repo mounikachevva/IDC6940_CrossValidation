@@ -15,7 +15,7 @@ editor:
     wrap: 72
 ---
 
-#### Week 7 (full (polished) description and exploratory data analysis / visualization of the dataset chosen)
+#### Week 8 
 
 ```{r}
 library(readr)
