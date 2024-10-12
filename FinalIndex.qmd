@@ -1,0 +1,363 @@
+---
+title: "Prediction of Martensite Start Temperature in Steels Using Cross Validation"
+author: "Mounika Chevva (Advisor: Dr. Samantha Seals)"
+date: " 10/13/2024"
+format:
+  html:
+    code-fold: true
+course: IDC6490 Capstone in Data Science
+self-contained: true
+execute: 
+  warning: false
+  message: false
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+#### Week 8 (Applying New Methods to the dataset)
+
+```{r}
+library(readr)
+
+Martensite <- read.csv("/Users/LaptopUser/Downloads/dataset.csv/Martensite Start-Temp.csv")
+
+head(Martensite)
+str(Martensite)
+
+
+```
+
+####  Dataset Description
+
+The martensite start temperature (Ms) is a critical parameter when designing high-performance
+steels and their heat treatments.
+
+Martensite start temperature (Ms) is our target variable.
+
+This table categorizes the variables based on their type and description to our study.
+
+
+```{r}
+library(knitr)
+
+var_desc <- data.frame(
+  Var = c("C", "Mn", "Si", "Cr", "Ni", "Mo", "V", "Co", "Al", 
+               "W", "Cu", "Nb", "Ti", "B", "N", "Ms"),
+  Description = c(
+    "Carbon ",
+    "Manganese ",
+    "Silicon ",
+    "Chromium ",
+    "Nickel ",
+    "Molybdenum ",
+    "Vanadium",
+    "Cobalt ",
+    "Aluminum",
+    "Tungsten ",
+    "Copper ",
+    "Niobium ",
+    "Titanium ",
+    "Boron ",
+    "Nitrogen ",
+    "Martensite Start Temperature Target Variable(°C)"
+  ),
+  Type = c(
+    "Numeric","Numeric","Numeric", "Numeric", "Numeric", "Numeric", "Numeric", "Numeric",
+   "Numeric", "Numeric", "Numeric", "Numeric", "Numeric", "Numeric", "Numeric", "Numeric"
+  ),
+  stringsAsFactors = FALSE  
+)
+
+kable(var_desc)
+
+
+```
+
+
+#### Exploratory Data Analysis (EDA)
+
+Exploratory Data Analysis (EDA) on the Martensite Start Temperature (Ms) dataset involves understanding the distribution, relationships, and patterns in the data.
+
+```{r}
+summary(Martensite)
+sum(is.na(Martensite))
+
+```
+
+The output [1] 0 from sum(is.na(Martensite)) indicates that there are no missing values (NAs) in the Martensite dataset. This means that all entries in the dataset have complete data without any gaps.
+
+### Data Visualization
+
+#### Histogram for Martensite Start Temperature 
+
+```{r}
+library(ggplot2)
+ggplot(Martensite, aes(x = Ms)) +
+  geom_histogram(binwidth = 10, fill = "blue", color = "black", alpha = 0.7) +
+  labs(title = "Distribution of Martensite Start Temperature (Ms)", x = "Martensite Start Temperature", y = "Frequency")
+```
+The histogram describes  the distribution of Martensite Start Temperature (Ms) values, ranging from 200 to 800°C. It shows a bimodal distribution with peaks around 400-450°C and 600-650°C, indicating two predominant temperature ranges. 
+
+#### Correlation matrix 
+
+The correlation matrix is a powerful tool used to visualize and quantify the relationships between key variables
+
+```{r}
+library(ggplot2)
+library(reshape2)
+library(corrplot)
+
+correlation_matrix <- cor(Martensite, use = "complete.obs")
+
+print(correlation_matrix)
+
+corrplot(correlation_matrix, method = "circle")
+```
+
+#### Insights from correlation matrix 
+
+The matrix uses color intensity to indicate the strength of the relationships between variables.
+
+Correlation coefficients displayed in the matrix range from -1 to 1, where values near ±1 indicate strong positive or negative correlations, and values near 0 indicate weak or no linear relationship.
+
+The correlations help identify significant predictors of Martensite:
+
+C (Carbon) shows a strong positive correlation with Mn (Manganese), suggesting that as carbon content increases, manganese also tends to increase.
+
+Ms (Martensite Start Temperature) has several notable negative correlations with elements like V (Vanadium), W (Tungsten), and N (Nitrogen). This implies that higher concentrations of these elements may lead to lower martensite start temperatures.
+
+The relationships identified here can be utilized to build predictive models for Ms based on the chemical composition of alloys.
+
+#### Boxplot for Ms vs Carbon (C)
+
+This boxplot graph illustrates the relationship between the Martensite Start Temperature (Ms) and Carbon content in percentage (%)
+
+```{r}
+ggplot(Martensite, aes(x = as.factor(C), y = Ms)) +
+  geom_boxplot(fill = "red") +
+  labs(title = "Boxplot of Martensite Ms vs Carbon", x = "Carbon (%)", y = "Martensite Start Temperature (Ms)")
+
+```
+
+#### Insights from the Boxplot
+
+X-axis (Carbon %): This represents the percentage of carbon content in the material. The values are spread out across a wide range, indicating different carbon concentrations.
+
+Y-axis (Martensite Start Temperature, Ms): This represents the temperature at which martensite begins to form during the cooling process. The temperature is measured in degrees Celsius.
+
+As the carbon content increases, the Ms temperature decreases. This is typical, as higher carbon content usually lowers the Ms temperature in steels and alloys.
+
+## Methods 
+
+### Linear Regression
+
+
+#### Preparing and Training a Linear Regression Model on the Martensite Dataset
+
+```{r}
+
+library(caret)
+library(dplyr)
+library(knitr)
+
+
+# Subset data
+predictors <- Martensite[, c("C","Mn","Si","Cr","Ni")]
+target <- Martensite$Ms #Ms is the Target Variable
+data_combined <- data.frame(predictors, Ms = target)
+
+# 
+set.seed(123)
+trainIndex <- createDataPartition(data_combined$Ms, p = .8, list = FALSE, times = 1)
+train_data <- data_combined[trainIndex,]
+test_data <- data_combined[-trainIndex,]
+
+model_train <- train(Ms ~ C + Mn + Si + Cr + Ni, 
+               data = train_data, 
+               method = "lm")
+
+summary(model_train)
+
+```
+#### Test For Significance
+
+####  k-fold cross-validation & calculation of RMSE, MAE, and R-squared
+
+
+```{r}
+
+train_kfold <- trainControl(method = "cv", number = 5)
+
+model_kfold <- train(Ms ~ C + Mn + Si + Cr + Ni, 
+                     data = train_data, 
+                     method = "lm", 
+                     trControl = train_kfold)
+
+calculate_rmse <- function(actual, predicted) {
+  sqrt(mean((actual - predicted)^2))
+}
+
+calculate_mae <- function(actual, predicted) {
+  mean(abs(actual - predicted))
+}
+
+calculate_r2 <- function(actual, predicted) {
+  1 - sum((predicted - actual)^2) / sum((actual - mean(actual))^2)
+}
+
+kfold_predictions <- predict(model_kfold, newdata = test_data) 
+
+kfold_rmse <- calculate_rmse(test_data$Ms, kfold_predictions) %>% round(2)
+kfold_mae <- calculate_mae(test_data$Ms, kfold_predictions) %>% round(2)
+kfold_r2 <- calculate_r2(test_data$Ms, kfold_predictions) %>% round(2)
+
+Measure_of_Error <- c("RMSE", "MAE", "R2")
+Result_Value <- c(kfold_rmse, kfold_mae, kfold_r2)
+kfold_df <- data.frame(Measure_of_Error, Result_Value) 
+
+kfold_df %>% kable()
+
+
+
+```
+
+#### Implementing Leave-One-Out Cross-Validation (LOOCV) for Linear Regression Model & calculation of RMSE, MAE, and R-squared
+```{r}
+set.seed(123)
+train_control_loocv <- trainControl(method = "LOOCV")
+
+model_loocv <- train(Ms ~ C + Mn + Si + Cr + Ni, 
+                     data = train_data, 
+                     method = "lm", 
+                     trControl = train_control_loocv)
+
+# Make predictions on the test data
+loocv_predictions <- predict(model_loocv, newdata = test_data)
+
+loocv_rmse <- calculate_rmse(test_data$Ms, loocv_predictions) %>% round(2)
+loocv_mae <- calculate_mae(test_data$Ms, loocv_predictions) %>% round(2)
+loocv_r2 <- calculate_r2(test_data$Ms, loocv_predictions) %>% round(2)
+
+Measure_of_Error <- c("RMSE", "MAE", "R2")
+Result_Value <- c(loocv_rmse, loocv_mae, loocv_r2)
+loocv_df <- data.frame(Measure_of_Error, Result_Value) 
+
+# Results table
+loocv_df %>% kable()
+
+```
+
+#### Conducting Nested Cross-Validation for the Linear Regression Model
+
+```{r}
+set.seed(123)
+outer_train_control <- trainControl(method = "cv", number = 5)
+inner_train_control <- trainControl(method = "cv", number = 5)
+
+nested_model <- function(data, indices) {
+  train_data <- data[indices,]
+  test_data <- data[-indices,]
+  
+  # Fit the linear regression model using the inner training set
+  model <- train(Ms ~ C + Mn + Si + Cr + Ni, 
+                 data = train_data, 
+                 method = "lm", 
+                 trControl = inner_train_control)
+  
+  # Make predictions on the outer test set
+  predictions <- predict(model, newdata = test_data)
+  
+  # Calculate RMSE, MAE, and R-squared
+  rmse <- calculate_rmse(test_data$Ms, predictions)
+  mae <- calculate_mae(test_data$Ms, predictions)
+  r2 <- calculate_r2(test_data$Ms, predictions)
+  
+  return(c(rmse, mae, r2))
+}
+
+# Create folds for outer cross-validation
+
+nested_cv_indices <- createFolds(data_combined$Ms, k = 5, list = TRUE, returnTrain = TRUE)
+
+# Apply the nested model function to each fold
+nested_cv_results <- t(sapply(nested_cv_indices, nested_model, data = data_combined))
+
+# Calculate average metrics from the nested cross-validation results
+nested_cv_rmse <- mean(nested_cv_results[, 1]) %>% round(2)
+nested_cv_mae <- mean(nested_cv_results[, 2]) %>% round(2)
+nested_cv_r2 <- mean(nested_cv_results[, 3]) %>% round(2)
+
+# Prepare results data frame
+Measure_of_Error <- c("RMSE", "MAE", "R2")
+Result_Value <- c(nested_cv_rmse, nested_cv_mae, nested_cv_r2)
+nested_cv_df <- data.frame(Measure_of_Error, Result_Value)
+
+# Display the results table
+nested_cv_df %>% kable()
+
+```
+
+#### Comparative Analysis of Cross-Validation Results for Linear Regression Models
+
+
+```{r}
+library(tidyr)
+
+# Adding method to CV data frames
+
+kfold_results  <- kfold_df %>% mutate(Method = "5-Fold") 
+LOOCV_results  <- loocv_df %>% mutate(Method = "LOOCV")
+nested_results <- nested_cv_df %>% mutate(Method = "Nested CV") 
+
+# Combining 3 CV data frames.
+# Result Summary Table
+result_long_df <- combine(kfold_results, LOOCV_results, nested_results)
+
+# Pivot wider tidy up
+result_wide_df <- result_long_df %>% 
+  pivot_wider(names_from = Method, values_from = Result_Value) #%>% 
+  # arrange(desc(R2), RMSE, MAE)
+result_wide_df %>% kable()
+```
+
+```{r}
+# Load necessary libraries
+library(ggplot2)
+library(dplyr)
+
+# Assuming 'result_long_df' contains your results
+result_long_df <- result_long_df %>%
+  mutate(Method = factor(Method, levels = c("5-Fold", "LOOCV", "Nested CV")))
+
+# Create the line plot
+line_plot <- result_long_df %>%
+  ggplot(aes(x = Method, y = Result_Value, group = Measure_of_Error, color = Measure_of_Error)) +
+  geom_line(size = 1.2) + # Line for each measure of error
+  geom_point(size = 3) +  # Points for each measure of error
+  labs(title = "Cross-Validation Results: Linear Model",
+       x = "Cross-Validation Method",
+       y = "Mean Error") +
+  theme_minimal() +
+  theme(axis.title.x = element_text(face = "bold"),
+        axis.title.y = element_text(face = "bold"),
+        title = element_text(face = "bold"),
+        legend.title = element_blank())
+
+# Display the plot
+print(line_plot)
+
+```
+## Model Performance Analysis
+
+The results of this analysis reveal that the models tested with 5-Fold Cross-Validation (5-Fold CV) and Leave-One-Out Cross-Validation (LOOCV) demonstrate impressive predictive accuracy. These two models consistently outshine the Nested CV model, indicating that they are more dependable for making predictions from the dataset.
+
+## Binary Outcomes
+
+### Why can't we use Linear regression for Binary Outcomes
+
+Linear regression assumes a continuous and normally distributed outcome, which doesn't hold true for binary data (e.g., 0 or 1).This can result in predicted values falling outside the 0-1 range, making them meaningless in a binary context. The coefficients in linear regression are interpreted as the change in the dependent variable for a one-unit change in the predictor. 
+
+Since our target variable is continuous, it means it can take on a wide range of values (e.g., temperature ). In this case, using techniques suitable for continuous outcomes, a linear regression, is appropriate.
+
+
