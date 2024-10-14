@@ -270,12 +270,11 @@ library(dplyr)
 library(knitr)
 
 
-# Subset data
 predictors <- Martensite[, c("C","Mn","Si","Cr","Ni")]
-target <- Martensite$Ms #Ms is the Target Variable
+target <- Martensite$Ms 
 data_combined <- data.frame(predictors, Ms = target)
 
-# 
+
 set.seed(123)
 trainIndex <- createDataPartition(data_combined$Ms, p = .8, list = FALSE, times = 1)
 train_data <- data_combined[trainIndex,]
@@ -344,7 +343,6 @@ model_loocv <- train(Ms ~ C + Mn + Si + Cr + Ni,
                      method = "lm", 
                      trControl = train_control_loocv)
 
-# Make predictions on the test data
 loocv_predictions <- predict(model_loocv, newdata = test_data)
 
 loocv_rmse <- calculate_rmse(test_data$Ms, loocv_predictions) %>% round(2)
@@ -355,7 +353,6 @@ Measure_of_Error <- c("RMSE", "MAE", "R2")
 Result_Value <- c(loocv_rmse, loocv_mae, loocv_r2)
 loocv_df <- data.frame(Measure_of_Error, Result_Value) 
 
-# Results table
 loocv_df %>% kable()
 
 ```
@@ -371,16 +368,13 @@ nested_model <- function(data, indices) {
   train_data <- data[indices,]
   test_data <- data[-indices,]
   
-  # Fit the linear regression model using the inner training set
   model <- train(Ms ~ C + Mn + Si + Cr + Ni, 
                  data = train_data, 
                  method = "lm", 
                  trControl = inner_train_control)
   
-  # Make predictions on the outer test set
   predictions <- predict(model, newdata = test_data)
   
-  # Calculate RMSE, MAE, and R-squared
   rmse <- calculate_rmse(test_data$Ms, predictions)
   mae <- calculate_mae(test_data$Ms, predictions)
   r2 <- calculate_r2(test_data$Ms, predictions)
@@ -388,24 +382,20 @@ nested_model <- function(data, indices) {
   return(c(rmse, mae, r2))
 }
 
-# Create folds for outer cross-validation
 
 nested_cv_indices <- createFolds(data_combined$Ms, k = 5, list = TRUE, returnTrain = TRUE)
 
-# Apply the nested model function to each fold
+
 nested_cv_results <- t(sapply(nested_cv_indices, nested_model, data = data_combined))
 
-# Calculate average metrics from the nested cross-validation results
 nested_cv_rmse <- mean(nested_cv_results[, 1]) %>% round(2)
 nested_cv_mae <- mean(nested_cv_results[, 2]) %>% round(2)
 nested_cv_r2 <- mean(nested_cv_results[, 3]) %>% round(2)
 
-# Prepare results data frame
 Measure_of_Error <- c("RMSE", "MAE", "R2")
 Result_Value <- c(nested_cv_rmse, nested_cv_mae, nested_cv_r2)
 nested_cv_df <- data.frame(Measure_of_Error, Result_Value)
 
-# Display the results table
 nested_cv_df %>% kable()
 
 ```
@@ -416,33 +406,27 @@ nested_cv_df %>% kable()
 ```{r}
 library(tidyr)
 
-# Adding method to CV data frames
 
 kfold_results  <- kfold_df %>% mutate(Method = "5-Fold") 
 LOOCV_results  <- loocv_df %>% mutate(Method = "LOOCV")
 nested_results <- nested_cv_df %>% mutate(Method = "Nested CV") 
 
-# Combining 3 CV data frames.
-# Result Summary Table
+
 result_long_df <- combine(kfold_results, LOOCV_results, nested_results)
 
-# Pivot wider tidy up
 result_wide_df <- result_long_df %>% 
   pivot_wider(names_from = Method, values_from = Result_Value) #%>% 
-  # arrange(desc(R2), RMSE, MAE)
+  
 result_wide_df %>% kable()
 ```
 
 ```{r}
-# Load necessary libraries
 library(ggplot2)
 library(dplyr)
 
-# Assuming 'result_long_df' contains your results
 result_long_df <- result_long_df %>%
   mutate(Method = factor(Method, levels = c("5-Fold", "LOOCV", "Nested CV")))
 
-# Create the line plot
 line_plot <- result_long_df %>%
   ggplot(aes(x = Method, y = Result_Value, group = Measure_of_Error, color = Measure_of_Error)) +
   geom_line(size = 1.2) + # Line for each measure of error
@@ -456,7 +440,6 @@ line_plot <- result_long_df %>%
         title = element_text(face = "bold"),
         legend.title = element_blank())
 
-# Display the plot
 print(line_plot)
 
 ```

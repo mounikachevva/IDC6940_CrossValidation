@@ -3732,22 +3732,21 @@ Ms -0.083678655 -0.020090832 -0.146951608  1.00000000</code></pre>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Subset data</span></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>predictors <span class="ot">&lt;-</span> Martensite[, <span class="fu">c</span>(<span class="st">&quot;C&quot;</span>,<span class="st">&quot;Mn&quot;</span>,<span class="st">&quot;Si&quot;</span>,<span class="st">&quot;Cr&quot;</span>,<span class="st">&quot;Ni&quot;</span>)]</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>target <span class="ot">&lt;-</span> Martensite<span class="sc">$</span>Ms <span class="co">#Ms is the Target Variable</span></span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>data_combined <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(predictors, <span class="at">Ms =</span> target)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>predictors <span class="ot">&lt;-</span> Martensite[, <span class="fu">c</span>(<span class="st">&quot;C&quot;</span>,<span class="st">&quot;Mn&quot;</span>,<span class="st">&quot;Si&quot;</span>,<span class="st">&quot;Cr&quot;</span>,<span class="st">&quot;Ni&quot;</span>)]</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>target <span class="ot">&lt;-</span> Martensite<span class="sc">$</span>Ms </span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>data_combined <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(predictors, <span class="at">Ms =</span> target)</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>trainIndex <span class="ot">&lt;-</span> <span class="fu">createDataPartition</span>(data_combined<span class="sc">$</span>Ms, <span class="at">p =</span> .<span class="dv">8</span>, <span class="at">list =</span> <span class="cn">FALSE</span>, <span class="at">times =</span> <span class="dv">1</span>)</span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>train_data <span class="ot">&lt;-</span> data_combined[trainIndex,]</span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>test_data <span class="ot">&lt;-</span> data_combined[<span class="sc">-</span>trainIndex,]</span>
-<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>model_train <span class="ot">&lt;-</span> <span class="fu">train</span>(Ms <span class="sc">~</span> C <span class="sc">+</span> Mn <span class="sc">+</span> Si <span class="sc">+</span> Cr <span class="sc">+</span> Ni, </span>
-<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>               <span class="at">data =</span> train_data, </span>
-<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>               <span class="at">method =</span> <span class="st">&quot;lm&quot;</span>)</span>
-<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>trainIndex <span class="ot">&lt;-</span> <span class="fu">createDataPartition</span>(data_combined<span class="sc">$</span>Ms, <span class="at">p =</span> .<span class="dv">8</span>, <span class="at">list =</span> <span class="cn">FALSE</span>, <span class="at">times =</span> <span class="dv">1</span>)</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>train_data <span class="ot">&lt;-</span> data_combined[trainIndex,]</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>test_data <span class="ot">&lt;-</span> data_combined[<span class="sc">-</span>trainIndex,]</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>model_train <span class="ot">&lt;-</span> <span class="fu">train</span>(Ms <span class="sc">~</span> C <span class="sc">+</span> Mn <span class="sc">+</span> Si <span class="sc">+</span> Cr <span class="sc">+</span> Ni, </span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>               <span class="at">data =</span> train_data, </span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>               <span class="at">method =</span> <span class="st">&quot;lm&quot;</span>)</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -3854,19 +3853,17 @@ F-statistic: 712.2 on 5 and 1230 DF,  p-value: &lt; 2.2e-16</code></pre>
 <span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>                     <span class="at">method =</span> <span class="st">&quot;lm&quot;</span>, </span>
 <span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>                     <span class="at">trControl =</span> train_control_loocv)</span>
 <span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Make predictions on the test data</span></span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>loocv_predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(model_loocv, <span class="at">newdata =</span> test_data)</span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>loocv_rmse <span class="ot">&lt;-</span> <span class="fu">calculate_rmse</span>(test_data<span class="sc">$</span>Ms, loocv_predictions) <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">2</span>)</span>
-<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>loocv_mae <span class="ot">&lt;-</span> <span class="fu">calculate_mae</span>(test_data<span class="sc">$</span>Ms, loocv_predictions) <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">2</span>)</span>
-<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>loocv_r2 <span class="ot">&lt;-</span> <span class="fu">calculate_r2</span>(test_data<span class="sc">$</span>Ms, loocv_predictions) <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">2</span>)</span>
-<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>Measure_of_Error <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;RMSE&quot;</span>, <span class="st">&quot;MAE&quot;</span>, <span class="st">&quot;R2&quot;</span>)</span>
-<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>Result_Value <span class="ot">&lt;-</span> <span class="fu">c</span>(loocv_rmse, loocv_mae, loocv_r2)</span>
-<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>loocv_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(Measure_of_Error, Result_Value) </span>
-<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Results table</span></span>
-<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>loocv_df <span class="sc">%&gt;%</span> <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>loocv_predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(model_loocv, <span class="at">newdata =</span> test_data)</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>loocv_rmse <span class="ot">&lt;-</span> <span class="fu">calculate_rmse</span>(test_data<span class="sc">$</span>Ms, loocv_predictions) <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">2</span>)</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>loocv_mae <span class="ot">&lt;-</span> <span class="fu">calculate_mae</span>(test_data<span class="sc">$</span>Ms, loocv_predictions) <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">2</span>)</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>loocv_r2 <span class="ot">&lt;-</span> <span class="fu">calculate_r2</span>(test_data<span class="sc">$</span>Ms, loocv_predictions) <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">2</span>)</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>Measure_of_Error <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;RMSE&quot;</span>, <span class="st">&quot;MAE&quot;</span>, <span class="st">&quot;R2&quot;</span>)</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>Result_Value <span class="ot">&lt;-</span> <span class="fu">c</span>(loocv_rmse, loocv_mae, loocv_r2)</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>loocv_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(Measure_of_Error, Result_Value) </span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>loocv_df <span class="sc">%&gt;%</span> <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
@@ -3907,42 +3904,35 @@ F-statistic: 712.2 on 5 and 1230 DF,  p-value: &lt; 2.2e-16</code></pre>
 <span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  train_data <span class="ot">&lt;-</span> data[indices,]</span>
 <span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  test_data <span class="ot">&lt;-</span> data[<span class="sc">-</span>indices,]</span>
 <span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Fit the linear regression model using the inner training set</span></span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>  model <span class="ot">&lt;-</span> <span class="fu">train</span>(Ms <span class="sc">~</span> C <span class="sc">+</span> Mn <span class="sc">+</span> Si <span class="sc">+</span> Cr <span class="sc">+</span> Ni, </span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>                 <span class="at">data =</span> train_data, </span>
-<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>                 <span class="at">method =</span> <span class="st">&quot;lm&quot;</span>, </span>
-<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>                 <span class="at">trControl =</span> inner_train_control)</span>
-<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Make predictions on the outer test set</span></span>
-<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>  predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(model, <span class="at">newdata =</span> test_data)</span>
-<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate RMSE, MAE, and R-squared</span></span>
-<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>  rmse <span class="ot">&lt;-</span> <span class="fu">calculate_rmse</span>(test_data<span class="sc">$</span>Ms, predictions)</span>
-<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>  mae <span class="ot">&lt;-</span> <span class="fu">calculate_mae</span>(test_data<span class="sc">$</span>Ms, predictions)</span>
-<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>  r2 <span class="ot">&lt;-</span> <span class="fu">calculate_r2</span>(test_data<span class="sc">$</span>Ms, predictions)</span>
-<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">c</span>(rmse, mae, r2))</span>
-<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>  model <span class="ot">&lt;-</span> <span class="fu">train</span>(Ms <span class="sc">~</span> C <span class="sc">+</span> Mn <span class="sc">+</span> Si <span class="sc">+</span> Cr <span class="sc">+</span> Ni, </span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>                 <span class="at">data =</span> train_data, </span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>                 <span class="at">method =</span> <span class="st">&quot;lm&quot;</span>, </span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>                 <span class="at">trControl =</span> inner_train_control)</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>  predictions <span class="ot">&lt;-</span> <span class="fu">predict</span>(model, <span class="at">newdata =</span> test_data)</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>  rmse <span class="ot">&lt;-</span> <span class="fu">calculate_rmse</span>(test_data<span class="sc">$</span>Ms, predictions)</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>  mae <span class="ot">&lt;-</span> <span class="fu">calculate_mae</span>(test_data<span class="sc">$</span>Ms, predictions)</span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>  r2 <span class="ot">&lt;-</span> <span class="fu">calculate_r2</span>(test_data<span class="sc">$</span>Ms, predictions)</span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">c</span>(rmse, mae, r2))</span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>nested_cv_indices <span class="ot">&lt;-</span> <span class="fu">createFolds</span>(data_combined<span class="sc">$</span>Ms, <span class="at">k =</span> <span class="dv">5</span>, <span class="at">list =</span> <span class="cn">TRUE</span>, <span class="at">returnTrain =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Create folds for outer cross-validation</span></span>
-<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a>nested_cv_indices <span class="ot">&lt;-</span> <span class="fu">createFolds</span>(data_combined<span class="sc">$</span>Ms, <span class="at">k =</span> <span class="dv">5</span>, <span class="at">list =</span> <span class="cn">TRUE</span>, <span class="at">returnTrain =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply the nested model function to each fold</span></span>
-<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a>nested_cv_results <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">sapply</span>(nested_cv_indices, nested_model, <span class="at">data =</span> data_combined))</span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a>nested_cv_results <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">sapply</span>(nested_cv_indices, nested_model, <span class="at">data =</span> data_combined))</span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a>nested_cv_rmse <span class="ot">&lt;-</span> <span class="fu">mean</span>(nested_cv_results[, <span class="dv">1</span>]) <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">2</span>)</span>
+<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a>nested_cv_mae <span class="ot">&lt;-</span> <span class="fu">mean</span>(nested_cv_results[, <span class="dv">2</span>]) <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">2</span>)</span>
+<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a>nested_cv_r2 <span class="ot">&lt;-</span> <span class="fu">mean</span>(nested_cv_results[, <span class="dv">3</span>]) <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">2</span>)</span>
 <span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate average metrics from the nested cross-validation results</span></span>
-<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a>nested_cv_rmse <span class="ot">&lt;-</span> <span class="fu">mean</span>(nested_cv_results[, <span class="dv">1</span>]) <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">2</span>)</span>
-<span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a>nested_cv_mae <span class="ot">&lt;-</span> <span class="fu">mean</span>(nested_cv_results[, <span class="dv">2</span>]) <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">2</span>)</span>
-<span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a>nested_cv_r2 <span class="ot">&lt;-</span> <span class="fu">mean</span>(nested_cv_results[, <span class="dv">3</span>]) <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">2</span>)</span>
-<span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-38"><a href="#cb19-38" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare results data frame</span></span>
-<span id="cb19-39"><a href="#cb19-39" aria-hidden="true" tabindex="-1"></a>Measure_of_Error <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;RMSE&quot;</span>, <span class="st">&quot;MAE&quot;</span>, <span class="st">&quot;R2&quot;</span>)</span>
-<span id="cb19-40"><a href="#cb19-40" aria-hidden="true" tabindex="-1"></a>Result_Value <span class="ot">&lt;-</span> <span class="fu">c</span>(nested_cv_rmse, nested_cv_mae, nested_cv_r2)</span>
-<span id="cb19-41"><a href="#cb19-41" aria-hidden="true" tabindex="-1"></a>nested_cv_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(Measure_of_Error, Result_Value)</span>
-<span id="cb19-42"><a href="#cb19-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-43"><a href="#cb19-43" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the results table</span></span>
-<span id="cb19-44"><a href="#cb19-44" aria-hidden="true" tabindex="-1"></a>nested_cv_df <span class="sc">%&gt;%</span> <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a>Measure_of_Error <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;RMSE&quot;</span>, <span class="st">&quot;MAE&quot;</span>, <span class="st">&quot;R2&quot;</span>)</span>
+<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a>Result_Value <span class="ot">&lt;-</span> <span class="fu">c</span>(nested_cv_rmse, nested_cv_mae, nested_cv_r2)</span>
+<span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a>nested_cv_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(Measure_of_Error, Result_Value)</span>
+<span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a>nested_cv_df <span class="sc">%&gt;%</span> <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
@@ -3977,21 +3967,18 @@ F-statistic: 712.2 on 5 and 1230 DF,  p-value: &lt; 2.2e-16</code></pre>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Adding method to CV data frames</span></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>kfold_results  <span class="ot">&lt;-</span> kfold_df <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">Method =</span> <span class="st">&quot;5-Fold&quot;</span>) </span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>LOOCV_results  <span class="ot">&lt;-</span> loocv_df <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">Method =</span> <span class="st">&quot;LOOCV&quot;</span>)</span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>nested_results <span class="ot">&lt;-</span> nested_cv_df <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">Method =</span> <span class="st">&quot;Nested CV&quot;</span>) </span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>kfold_results  <span class="ot">&lt;-</span> kfold_df <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">Method =</span> <span class="st">&quot;5-Fold&quot;</span>) </span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>LOOCV_results  <span class="ot">&lt;-</span> loocv_df <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">Method =</span> <span class="st">&quot;LOOCV&quot;</span>)</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>nested_results <span class="ot">&lt;-</span> nested_cv_df <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">Method =</span> <span class="st">&quot;Nested CV&quot;</span>) </span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Combining 3 CV data frames.</span></span>
-<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Result Summary Table</span></span>
-<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>result_long_df <span class="ot">&lt;-</span> <span class="fu">combine</span>(kfold_results, LOOCV_results, nested_results)</span>
-<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Pivot wider tidy up</span></span>
-<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>result_wide_df <span class="ot">&lt;-</span> result_long_df <span class="sc">%&gt;%</span> </span>
-<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> Method, <span class="at">values_from =</span> Result_Value) <span class="co">#%&gt;% </span></span>
-<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># arrange(desc(R2), RMSE, MAE)</span></span>
-<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>result_wide_df <span class="sc">%&gt;%</span> <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>result_long_df <span class="ot">&lt;-</span> <span class="fu">combine</span>(kfold_results, LOOCV_results, nested_results)</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>result_wide_df <span class="ot">&lt;-</span> result_long_df <span class="sc">%&gt;%</span> </span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> Method, <span class="at">values_from =</span> Result_Value) <span class="co">#%&gt;% </span></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>result_wide_df <span class="sc">%&gt;%</span> <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
@@ -4029,30 +4016,26 @@ F-statistic: 712.2 on 5 and 1230 DF,  p-value: &lt; 2.2e-16</code></pre>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load necessary libraries</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Assuming &#39;result_long_df&#39; contains your results</span></span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>result_long_df <span class="ot">&lt;-</span> result_long_df <span class="sc">%&gt;%</span></span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Method =</span> <span class="fu">factor</span>(Method, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;5-Fold&quot;</span>, <span class="st">&quot;LOOCV&quot;</span>, <span class="st">&quot;Nested CV&quot;</span>)))</span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the line plot</span></span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>line_plot <span class="ot">&lt;-</span> result_long_df <span class="sc">%&gt;%</span></span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Method, <span class="at">y =</span> Result_Value, <span class="at">group =</span> Measure_of_Error, <span class="at">color =</span> Measure_of_Error)) <span class="sc">+</span></span>
-<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="fl">1.2</span>) <span class="sc">+</span> <span class="co"># Line for each measure of error</span></span>
-<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span>  <span class="co"># Points for each measure of error</span></span>
-<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Cross-Validation Results: Linear Model&quot;</span>,</span>
-<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Cross-Validation Method&quot;</span>,</span>
-<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Mean Error&quot;</span>) <span class="sc">+</span></span>
-<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.title.x =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">&quot;bold&quot;</span>),</span>
-<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.title.y =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">&quot;bold&quot;</span>),</span>
-<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">&quot;bold&quot;</span>),</span>
-<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.title =</span> <span class="fu">element_blank</span>())</span>
-<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the plot</span></span>
-<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(line_plot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>result_long_df <span class="ot">&lt;-</span> result_long_df <span class="sc">%&gt;%</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Method =</span> <span class="fu">factor</span>(Method, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;5-Fold&quot;</span>, <span class="st">&quot;LOOCV&quot;</span>, <span class="st">&quot;Nested CV&quot;</span>)))</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>line_plot <span class="ot">&lt;-</span> result_long_df <span class="sc">%&gt;%</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Method, <span class="at">y =</span> Result_Value, <span class="at">group =</span> Measure_of_Error, <span class="at">color =</span> Measure_of_Error)) <span class="sc">+</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="fl">1.2</span>) <span class="sc">+</span> <span class="co"># Line for each measure of error</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span>  <span class="co"># Points for each measure of error</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Cross-Validation Results: Linear Model&quot;</span>,</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Cross-Validation Method&quot;</span>,</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Mean Error&quot;</span>) <span class="sc">+</span></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.title.x =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">&quot;bold&quot;</span>),</span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.title.y =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">&quot;bold&quot;</span>),</span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">&quot;bold&quot;</span>),</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.title =</span> <span class="fu">element_blank</span>())</span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(line_plot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
