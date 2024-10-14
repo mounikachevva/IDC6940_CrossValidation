@@ -119,7 +119,7 @@ Nested Cross-Validation is a robust model evaluation technique that involves two
 
 ## Data Extraction, Transformation and Visualization
 
-In our study, we analyzed a dataset from @wentzien2024machine Martensite dataset focuses on predicting the Martensite Start Temperature (Ms) in steel alloys based on their chemical compositions. It includes various attributes such as carbon (C), manganese (Mn), silicon (Si), chromium (Cr), and nickel (Ni) concentrations, which are known to influence the transformation of austenite to martensite during cooling.
+In our study, we analyzed a dataset from @wentzien2024machine Martensite dataset focuses on predicting the Martensite Start Temperature (Ms) in steel alloys based on their chemical compositions. It includes various attributes such as carbon (C), manganese (Mn), silicon (Si), chromium (Cr), and nickel (Ni) concentrations, which are known to influence the transformation of austenite to martensite during cooling  [Table 1](#table-1).
 
 #### Load the Data and Libraries
 
@@ -145,7 +145,8 @@ This table categorizes the variables based on their type and description to our 
 
 #### Table 1
 
-```{r}
+```{r table-1, echo=FALSE}
+
 library(knitr)
 
 var_desc <- data.frame(
