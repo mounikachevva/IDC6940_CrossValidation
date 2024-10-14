@@ -6,6 +6,7 @@ format:
   html:
     code-fold: true
 course: IDC6490 Capstone in Data Science
+bibliography: references.bib 
 self-contained: true
 execute: 
   warning: false
@@ -15,10 +16,112 @@ editor:
     wrap: 72
 ---
 
-#### Week 8 Mehtods & Models Models 
+#### Week 8 Methods & Models 
 
 ## Introduction
 
+Cross-validation is a fundamental statistical technique widely used in machine learning for assessing the performance and generalizability of predictive models. It involves partitioning a dataset into training and validation subsets, allowing a model to be trained on one subset while being evaluated on another. 
+
+One of the most common forms of cross-validation is K-Fold Cross-Validation, introduced by Kohavi (1995)@Kohavi1995. In this method, the dataset is divided into $k$ subsets (or "folds"). The model is trained on $k−1$ folds and validated on the remaining fold, a process that is repeated 
+$k$ times, ensuring each fold serves as a validation set exactly once. This technique provides a more reliable estimate of model performance by averaging the results over multiple training and validation cycles.
+
+## Methods
+
+Model Measures of Errors are fundamental for evaluating the performance of predictive models, especially in regression tasks. These metrics help assess how well the model approximates the true relationship between the predictor and target variables. Below are some common measures of error, along with their mathematical formulas and references:
+
+
+### Root Mean Squared Error (RMSE)
+
+RMSE, or Root Mean Squared Error, tells us how far off our model’s predictions are from the actual values, on average. It looks at the squared differences between predicted and real values, which means it gives more weight to bigger errors, making it especially useful for spotting when predictions miss the mark by a lot. This makes RMSE great for identifying how well a model handles extreme cases, where predictions are far off from what's expected (Chai & Draxler, 2014)@chai2014root .
+
+$$RMSE = \sqrt{\frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2}$$
+where $y_i$ is the observed value, $\hat{y}_i$ is the predicted value,and $n$ is the total number of observations.
+
+### Mean Absolute Error (MAE)
+
+Mean Absolute Error (MAE) calculates the average of the absolute differences between the observed and predicted values, making it a straightforward way to understand model accuracy. Unlike RMSE, MAE doesn’t penalize large errors as much, so it’s less sensitive to outliers. This makes it useful when you want an overall idea of prediction accuracy, expressed in the same units as the target variable (Willmott & Matsuura, 2005)@willmott2005advantages.
+
+$$
+\text{MAE} = \frac{1}{n} \sum_{i=1}^{n} |y_i - \hat{y}_i|
+$$
+
+
+###  R-squared (R²)
+
+R², or the coefficient of determination, indicates how much of the variance in the dependent variable can be explained by the independent variables in a model. While it's a popular metric for assessing how well a model fits the data, Draper and Smith (1998) @draper1998applied warn that R² can sometimes be misleading, particularly in the context of non-linear models. Therefore, while R² can provide valuable insights, it should be interpreted with caution and in conjunction with other performance metrics to ensure a comprehensive evaluation of model performance.
+$$
+R^2 = 1 - \frac{\sum_{i=1}^{n} (y_i - \hat{y}_i)^2}{\sum_{i=1}^{n} (y_i - \bar{y})^2}
+$$
+where $\bar{y}$ is the mean of the observed values.
+
+##  k-Fold Cross-validation
+
+K-Fold Cross-Validation @arlot2010survey divides the dataset into $𝑘$ equal parts, or "folds." The model trains on $k−1$ folds and tests on the remaining one, repeating this for each fold. This approach helps prevent overfitting and provides a clearer picture of how well the model performs on unseen data
+
+### Step-by-Step Procedure for K-Fold Cross-Validation
+
+Step 1: Prepare the Dataset
+Begin by loading the dataset and selecting relevant predictor variables along with the target variable. For instance, if predicting Martensite Start Temperature (Ms), ensure that the predictors (C, Mn, Si, Cr, Ni) are included.
+
+Step 2: Set Up K-Fold Control
+Define the number of folds (commonly 5 or 10) for the cross-validation. Set a random seed for reproducibility and create a training control object using the trainControl function from the caret package.
+
+Step 3: Fit the Model
+Train a linear regression model with K-Fold Cross-Validation by specifying the model formula and the dataset, while using the training control object that defined earlier.
+
+Step 4: Evaluate Performance
+Once the model is trained, review the performance metrics, such as RMSE and R², provided by the train function.
+
+Step 5: Analyze Results
+Extract and visualize the results to understand the model's stability across different folds, ensuring a comprehensive evaluation of its predictive capabilities. 
+
+## Leave-one-out Cross-validations (LOOCV)
+
+Leave-One-Out Cross-Validation (LOOCV) @geisser1975predictive is a specific case of cross-validation where each training set is created by leaving out just one observation from the dataset. This technique is useful for small datasets, as it maximizes the training data available for each model training.
+
+#### Step-by-Step Procedure for LOOCV:
+
+1.Prepare the Dataset: Considering  the Martensite dataset, which consists of observations with various chemical compositions (C, Mn, Si, Cr, Ni) and the target variable, Martensite Start Temperature (Ms).
+
+2.Set Up for LOOCV: With $n$observations in the dataset, LOOCV will create $n$ folds, where each fold contains one observation as the test set.
+
+3.Iterate Through Each Observation: For each observation:
+
+Leave Out One Observation: Select one data point (e.g., a specific steel composition with its Ms value) as the test set.
+
+Train the Model: Use the remaining $n−1$ observations to train a linear regression model predicting Ms based on the chemical compositions.
+
+4.Evaluate the Model: After training, predict the Ms value for the left-out observation and record the performance metric, such as RMSE or MAE.
+
+5.Repeat for All Observations: Continue this process until every observation has served as the test set.
+
+6.Calculate Average Performance: Finally, compute the average of the recorded metrics to assess the model's overall predictive performance on the Martensite dataset.
+
+## Nested Cross-validation
+
+Nested Cross-Validation is a robust model evaluation technique that involves two levels of cross-validation: an outer loop for assessing model performance and an inner loop for hyperparameter tuning @boulesteix2007partial. This approach is particularly useful for avoiding overfitting and ensuring that the model generalizes well to unseen data.
+
+#### Step-by-Step Procedure for Nested Cross-Validation:
+
+1.Dataset Preparation: Start with the Martensite dataset containing steel compositions and Martensite Start Temperature (Ms).
+
+2.Outer Loop: Split the dataset into $k$ folds (e.g., 5-fold) for performance evaluation.
+
+3.Inner Loop: For each outer fold, perform $m$ folds (e.g., 5-fold) for hyperparameter tuning.
+
+4.Train Model: Train the model on $m−1$ folds and validate on the held-out fold in the inner loop.
+
+5.Select Hyperparameters: Choose the best hyperparameters based on inner loop performance.
+
+6.Evaluate Model: Train the final model on the outer training set and test it on the held-out fold.
+
+7.Average Metrics: Calculate average performance metrics across all outer folds to assess model effectiveness.
+
+## Data Extraction, Transformation and Visualization
+
+In our study, we analyzed a dataset from @wentzien2024machine Martensite dataset focuses on predicting the Martensite Start Temperature (Ms) in steel alloys based on their chemical compositions. It includes various attributes such as carbon (C), manganese (Mn), silicon (Si), chromium (Cr), and nickel (Ni) concentrations, which are known to influence the transformation of austenite to martensite during cooling.
+
+#### Load the Data and Libraries
 
 ```{r}
 library(readr)
@@ -40,6 +143,7 @@ Martensite start temperature (Ms) is our target variable.
 
 This table categorizes the variables based on their type and description to our study.
 
+#### Table 1
 
 ```{r}
 library(knitr)
@@ -151,4 +255,219 @@ Y-axis (Martensite Start Temperature, Ms): This represents the temperature at wh
 
 As the carbon content increases, the Ms temperature decreases. This is typical, as higher carbon content usually lowers the Ms temperature in steels and alloys.
 
+## Modelling and Results
 
+### Linear Regression Model
+
+Linear regression is a fundamental statistical technique that establishes a relationship between a dependent variable and one or more independent variables by fitting a linear equation to observed data. In our dataset, which focuses on predicting the Martensite Start Temperature (Ms) of steel based on its chemical composition (C, Mn, Si, Cr, Ni), linear regression allows us to quantify how changes in these elements influence Ms.
+
+#### Preparing and Training a Linear Regression Model on the Martensite Dataset
+
+```{r}
+
+library(caret)
+library(dplyr)
+library(knitr)
+
+
+# Subset data
+predictors <- Martensite[, c("C","Mn","Si","Cr","Ni")]
+target <- Martensite$Ms #Ms is the Target Variable
+data_combined <- data.frame(predictors, Ms = target)
+
+# 
+set.seed(123)
+trainIndex <- createDataPartition(data_combined$Ms, p = .8, list = FALSE, times = 1)
+train_data <- data_combined[trainIndex,]
+test_data <- data_combined[-trainIndex,]
+
+model_train <- train(Ms ~ C + Mn + Si + Cr + Ni, 
+               data = train_data, 
+               method = "lm")
+
+summary(model_train)
+
+```
+ $$ M_s = \beta_0 +\beta_1 C +\beta_2 Mn + \beta_3 Si + \beta_4 Cr + \beta_5 Ni $$
+$$M_s = 746.99 - 254.85 C - 24.24 Mn - 13.28 Si - 7.8 Cr - 14.64 Ni $$
+This model indicates a strong relationship between the chemical compositions and the Martensite Start Temperature, with a high R-squared value signifying that approximately 74.33% of the variability in $Ms$ can be explained by the model.
+  
+#### Test For Significance
+
+####  k-fold cross-validation & calculation of RMSE, MAE, and R-squared
+
+
+```{r}
+
+train_kfold <- trainControl(method = "cv", number = 5)
+
+model_kfold <- train(Ms ~ C + Mn + Si + Cr + Ni, 
+                     data = train_data, 
+                     method = "lm", 
+                     trControl = train_kfold)
+
+calculate_rmse <- function(actual, predicted) {
+  sqrt(mean((actual - predicted)^2))
+}
+
+calculate_mae <- function(actual, predicted) {
+  mean(abs(actual - predicted))
+}
+
+calculate_r2 <- function(actual, predicted) {
+  1 - sum((predicted - actual)^2) / sum((actual - mean(actual))^2)
+}
+
+kfold_predictions <- predict(model_kfold, newdata = test_data) 
+
+kfold_rmse <- calculate_rmse(test_data$Ms, kfold_predictions) %>% round(2)
+kfold_mae <- calculate_mae(test_data$Ms, kfold_predictions) %>% round(2)
+kfold_r2 <- calculate_r2(test_data$Ms, kfold_predictions) %>% round(2)
+
+Measure_of_Error <- c("RMSE", "MAE", "R2")
+Result_Value <- c(kfold_rmse, kfold_mae, kfold_r2)
+kfold_df <- data.frame(Measure_of_Error, Result_Value) 
+
+kfold_df %>% kable()
+
+
+
+```
+
+#### Implementing Leave-One-Out Cross-Validation (LOOCV) for Linear Regression Model & calculation of RMSE, MAE, and R-squared
+```{r}
+set.seed(123)
+train_control_loocv <- trainControl(method = "LOOCV")
+
+model_loocv <- train(Ms ~ C + Mn + Si + Cr + Ni, 
+                     data = train_data, 
+                     method = "lm", 
+                     trControl = train_control_loocv)
+
+# Make predictions on the test data
+loocv_predictions <- predict(model_loocv, newdata = test_data)
+
+loocv_rmse <- calculate_rmse(test_data$Ms, loocv_predictions) %>% round(2)
+loocv_mae <- calculate_mae(test_data$Ms, loocv_predictions) %>% round(2)
+loocv_r2 <- calculate_r2(test_data$Ms, loocv_predictions) %>% round(2)
+
+Measure_of_Error <- c("RMSE", "MAE", "R2")
+Result_Value <- c(loocv_rmse, loocv_mae, loocv_r2)
+loocv_df <- data.frame(Measure_of_Error, Result_Value) 
+
+# Results table
+loocv_df %>% kable()
+
+```
+
+#### Conducting Nested Cross-Validation for the Linear Regression Model
+
+```{r}
+set.seed(123)
+outer_train_control <- trainControl(method = "cv", number = 5)
+inner_train_control <- trainControl(method = "cv", number = 5)
+
+nested_model <- function(data, indices) {
+  train_data <- data[indices,]
+  test_data <- data[-indices,]
+  
+  # Fit the linear regression model using the inner training set
+  model <- train(Ms ~ C + Mn + Si + Cr + Ni, 
+                 data = train_data, 
+                 method = "lm", 
+                 trControl = inner_train_control)
+  
+  # Make predictions on the outer test set
+  predictions <- predict(model, newdata = test_data)
+  
+  # Calculate RMSE, MAE, and R-squared
+  rmse <- calculate_rmse(test_data$Ms, predictions)
+  mae <- calculate_mae(test_data$Ms, predictions)
+  r2 <- calculate_r2(test_data$Ms, predictions)
+  
+  return(c(rmse, mae, r2))
+}
+
+# Create folds for outer cross-validation
+
+nested_cv_indices <- createFolds(data_combined$Ms, k = 5, list = TRUE, returnTrain = TRUE)
+
+# Apply the nested model function to each fold
+nested_cv_results <- t(sapply(nested_cv_indices, nested_model, data = data_combined))
+
+# Calculate average metrics from the nested cross-validation results
+nested_cv_rmse <- mean(nested_cv_results[, 1]) %>% round(2)
+nested_cv_mae <- mean(nested_cv_results[, 2]) %>% round(2)
+nested_cv_r2 <- mean(nested_cv_results[, 3]) %>% round(2)
+
+# Prepare results data frame
+Measure_of_Error <- c("RMSE", "MAE", "R2")
+Result_Value <- c(nested_cv_rmse, nested_cv_mae, nested_cv_r2)
+nested_cv_df <- data.frame(Measure_of_Error, Result_Value)
+
+# Display the results table
+nested_cv_df %>% kable()
+
+```
+
+#### Comparative Analysis of Cross-Validation Results for Linear Regression Models
+
+
+```{r}
+library(tidyr)
+
+# Adding method to CV data frames
+
+kfold_results  <- kfold_df %>% mutate(Method = "5-Fold") 
+LOOCV_results  <- loocv_df %>% mutate(Method = "LOOCV")
+nested_results <- nested_cv_df %>% mutate(Method = "Nested CV") 
+
+# Combining 3 CV data frames.
+# Result Summary Table
+result_long_df <- combine(kfold_results, LOOCV_results, nested_results)
+
+# Pivot wider tidy up
+result_wide_df <- result_long_df %>% 
+  pivot_wider(names_from = Method, values_from = Result_Value) #%>% 
+  # arrange(desc(R2), RMSE, MAE)
+result_wide_df %>% kable()
+```
+
+```{r}
+# Load necessary libraries
+library(ggplot2)
+library(dplyr)
+
+# Assuming 'result_long_df' contains your results
+result_long_df <- result_long_df %>%
+  mutate(Method = factor(Method, levels = c("5-Fold", "LOOCV", "Nested CV")))
+
+# Create the line plot
+line_plot <- result_long_df %>%
+  ggplot(aes(x = Method, y = Result_Value, group = Measure_of_Error, color = Measure_of_Error)) +
+  geom_line(size = 1.2) + # Line for each measure of error
+  geom_point(size = 3) +  # Points for each measure of error
+  labs(title = "Cross-Validation Results: Linear Model",
+       x = "Cross-Validation Method",
+       y = "Mean Error") +
+  theme_minimal() +
+  theme(axis.title.x = element_text(face = "bold"),
+        axis.title.y = element_text(face = "bold"),
+        title = element_text(face = "bold"),
+        legend.title = element_blank())
+
+# Display the plot
+print(line_plot)
+
+```
+## Model Performance Analysis
+
+The results of this analysis reveal that the models tested with 5-Fold Cross-Validation (5-Fold CV) and Leave-One-Out Cross-Validation (LOOCV) demonstrate impressive predictive accuracy. These two models consistently outshine the Nested CV model, indicating that they are more dependable for making predictions from the dataset.
+
+## Binary Outcomes
+
+### Why can't we use Linear regression for Binary Outcomes
+
+Linear regression assumes a continuous and normally distributed outcome, which doesn't hold true for binary data (e.g., 0 or 1).This can result in predicted values falling outside the 0-1 range, making them meaningless in a binary context. The coefficients in linear regression are interpreted as the change in the dependent variable for a one-unit change in the predictor. 
+
+Since our target variable is continuous, it means it can take on a wide range of values (e.g., temperature ). In this case, using techniques suitable for continuous outcomes, a linear regression, is appropriate.
