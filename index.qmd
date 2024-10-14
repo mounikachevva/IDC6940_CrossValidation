@@ -15,7 +15,10 @@ editor:
     wrap: 72
 ---
 
-#### Week 8 
+#### Week 8 Mehtods & Models Models 
+
+## Introduction
+
 
 ```{r}
 library(readr)
