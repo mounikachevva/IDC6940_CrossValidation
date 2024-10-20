@@ -1,7 +1,7 @@
 ---
 title: "Prediction of Martensite Start Temperature in Steels Using Cross Validation"
 author: "Mounika Chevva (Advisor: Dr. Samantha Seals)"
-date: " 10/13/2024"
+date: " 10/20/2024"
 format:
   html:
     code-fold: true
@@ -16,7 +16,7 @@ editor:
     wrap: 72
 ---
 
-#### Week 8 Methods & Models 
+#### Week 9 Methods & Models 
 
 ## Introduction
 
@@ -128,8 +128,8 @@ library(readr)
 
 Martensite <- read.csv("/Users/LaptopUser/Downloads/dataset.csv/Martensite Start-Temp.csv")
 
-head(Martensite)
-str(Martensite)
+#head(Martensite)
+#str(Martensite)
 
 
 ```
@@ -188,7 +188,7 @@ kable(var_desc)
 Exploratory Data Analysis (EDA) on the Martensite Start Temperature (Ms) dataset involves understanding the distribution, relationships, and patterns in the data.
 
 ```{r}
-summary(Martensite)
+#summary(Martensite)
 sum(is.na(Martensite))
 
 ```
@@ -218,7 +218,7 @@ library(corrplot)
 
 correlation_matrix <- cor(Martensite, use = "complete.obs")
 
-print(correlation_matrix)
+#print(correlation_matrix)
 
 corrplot(correlation_matrix, method = "circle")
 ```
@@ -455,3 +455,194 @@ The results of this analysis reveal that the models tested with 5-Fold Cross-Val
 Linear regression assumes a continuous and normally distributed outcome, which doesn't hold true for binary data (e.g., 0 or 1).This can result in predicted values falling outside the 0-1 range, making them meaningless in a binary context. The coefficients in linear regression are interpreted as the change in the dependent variable for a one-unit change in the predictor. 
 
 Since our target variable is continuous, it means it can take on a wide range of values (e.g., temperature ). In this case, using techniques suitable for continuous outcomes, a linear regression, is appropriate.
+
+##  Support Vector Machines (SVM) for Regression (SVR)
+
+```{r}
+
+library(e1071)
+library(caret)
+
+set.seed(123) 
+
+
+predictors <- Martensite[, c("C","Mn","Si","Cr","Ni")]
+target <- Martensite$Ms 
+data_combined <- data.frame(predictors, Ms = target)
+
+
+trainIndex <- createDataPartition(data_combined$Ms, p = .8, list = FALSE, times = 1)
+train_data <- data_combined[trainIndex,]
+test_data <- data_combined[-trainIndex,]
+
+svr_model <- train(Ms ~ C + Mn + Si + Cr + Ni, 
+                   data = train_data, 
+                   method = "svmRadial")  
+
+
+print(svr_model)
+```
+
+The SVM model seems to perform really well with $C=1.00$. This is shown by the fact that it has the lowest RMSE, the highest R-squared, and the lowest MAE when compared to the other values tested. Essentially, this means the model is doing a great job of capturing the key patterns in the data, making it a solid choice for this analysis.
+
+
+### Support Vector Machines (SVM) using K fold Cross Validation
+
+```{r}
+train_kfold <- trainControl(method = "cv", number = 5)
+
+svr_model <- train(Ms ~ C + Mn + Si + Cr + Ni, 
+                   data = train_data, 
+                   method = "svmRadial",
+                   trControl = train_kfold)
+
+svr_kfold_predictions <- predict(svr_model, newdata = test_data)
+
+calculate_rmse <- function(actual, predicted) {
+  sqrt(mean((actual - predicted)^2))
+}
+
+calculate_mae <- function(actual, predicted) {
+  mean(abs(actual - predicted))
+}
+
+calculate_r2 <- function(actual, predicted) {
+  cor(actual, predicted)^2
+}
+
+svr_kfold_rmse <- calculate_rmse(test_data$Ms, svr_kfold_predictions) %>% round(2)
+svr_kfold_mae <- calculate_mae(test_data$Ms, svr_kfold_predictions) %>% round(2)
+svr_kfold_r2 <- calculate_r2(test_data$Ms, svr_kfold_predictions) %>% round(2)
+
+Measure_of_Error <- c("RMSE", "MAE", "R2")
+Result_Value <- c(svr_kfold_rmse, svr_kfold_mae, svr_kfold_r2)
+svr_kfold_df <- data.frame(Measure_of_Error, Result_Value) 
+
+svr_kfold_df %>% kable()
+
+
+```
+
+### Support Vector Machines (SVM) using LOOCV 
+
+
+```{r}
+library(e1071)
+library(caret)
+library(dplyr)
+library(knitr)
+
+set.seed(123)
+
+train_loocv <- trainControl(method = "LOOCV")
+
+model_loocv <- train(Ms ~ C + Mn + Si + Cr + Ni, 
+                     data = train_data, 
+                     method = "svmLinear",  
+                     trControl = train_loocv)
+
+loocv_predictions <- predict(model_loocv, newdata = test_data)
+
+loocv_rmse <- sqrt(mean((test_data$Ms - loocv_predictions)^2)) %>% round(2) 
+loocv_mae <- mean(abs(test_data$Ms - loocv_predictions)) %>% round(2) 
+loocv_r2 <- cor(test_data$Ms, loocv_predictions)^2 %>% round(2) 
+
+Measure_of_Error <- c("RMSE", "MAE", "R2")
+Result_Value <- c(loocv_rmse, loocv_mae, loocv_r2)
+loocv_df <- data.frame(Measure_of_Error, Result_Value) 
+
+kable(loocv_df)
+
+
+```
+
+### Support Vector Machines (SVM) using Nested Cross Validation
+
+```{r}
+set.seed(123)
+
+outer_train_control <- trainControl(method = "cv", number = 5)
+
+inner_train_control <- trainControl(method = "cv", number = 5)
+
+nested_svm <- function(data, indices) {
+  train_data <- data[indices,]
+  test_data <- data[-indices,]
+
+
+ model <- train(Ms ~ C + Mn + Si + Cr + Ni, 
+                 data = train_data, 
+                 method = "svmRadial", 
+                 trControl = inner_train_control,
+                 tuneLength = 3) 
+   predictions <- predict(model, newdata = test_data)
+rmse <- sqrt(mean((test_data$Ms - predictions)^2))
+  mae <- mean(abs(test_data$Ms - predictions))
+  r2 <- cor(test_data$Ms, predictions)^2
+  
+  return(c(rmse, mae, r2))
+}
+
+nested_cv_indices <- createFolds(data_combined$Ms, k = 5, list = TRUE, returnTrain = TRUE)
+
+nested_cv_results <- t(sapply(nested_cv_indices, nested_svm, data = data_combined))
+
+nested_cv_rmse <- mean(nested_cv_results[, 1]) %>% round(2)
+nested_cv_mae <- mean(nested_cv_results[, 2]) %>% round(2)
+nested_cv_r2 <- mean(nested_cv_results[, 3]) %>% round(2)
+
+Measure_of_Error <- c("RMSE", "MAE", "R2")
+Result_Value <- c(nested_cv_rmse, nested_cv_mae, nested_cv_r2)
+nested_cv_df <- data.frame(Measure_of_Error, Result_Value)
+
+kable(nested_cv_df)
+
+
+```
+
+### Model Comparision
+
+```{r}
+
+library(tidyr)
+
+Comparison_df <- rbind(
+  Regression_R <- cbind(result_long_df, c(replicate(length(result_long_df),"Linear_Regression"))) %>% rename(Model=4),
+  SVM_KFold_R <- svr_kfold_df %>% mutate(Method = "5-Fold", Model = "SVM"),
+  SVM_LOOCV_R <- loocv_df %>% mutate(Method = "LOOCV", Model = "SVM"),
+  SVM_Nest_R  <- nested_cv_df %>% mutate(Method = "Nested CV", Model = "SVM")
+  ) 
+
+Comparison_df %>% 
+  pivot_wider(names_from = Model, values_from = Result_Value) %>% 
+  relocate(Method) %>% 
+  kable()
+
+```
+
+### Model Comparision Plot
+
+```{r}
+
+library(ggplot2)
+library(dplyr)
+
+kfold_linear_df <- kfold_df %>% mutate(Model = "Linear Regression")
+kfold_svm_df <- svr_kfold_df %>% mutate(Model = "SVM")
+
+comparison_df <- bind_rows(kfold_linear_df, kfold_svm_df)
+
+ggplot(comparison_df, aes(x = Measure_of_Error, y = Result_Value, color = Model, group = Model)) +
+  geom_line(size = 1.2) +                   
+  geom_point(size = 3) +                  
+  labs(title = "Model Comparison: Linear Regression vs SVM (K-Fold CV, k=5)",
+       y = "Performance Metric Value",
+       x = "Performance Metric") +
+  theme_minimal() +
+  theme(legend.title = element_blank())    
+
+
+```
+For the martensite start temperature (Ms) dataset, we compared the performance of Linear Regression and Support Vector Machine (SVM) models using three key metrics: Mean Absolute Error (MAE), R-squared (R²), and Root Mean Squared Error (RMSE), evaluated with 5-fold cross-validation. The findings clearly show that the SVM model performs better than Linear Regression in all aspects. SVM achieved a notably lower MAE (~21) compared to Linear Regression (~33), meaning its predictions were closer to the actual values. The R² for SVM (~0.9) was much higher than Linear Regression (~0.55), indicating SVM explained 90% of the data's variance, whereas Linear Regression only captured about 55%. Additionally, SVM's RMSE (~25) was significantly lower than Linear Regression’s (~48), reflecting its greater accuracy and fewer large prediction errors. Overall, SVM proved to be the more suitable model for predicting martensite start temperature, delivering more accurate and reliable results for this dataset.
+
+
