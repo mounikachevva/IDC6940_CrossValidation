@@ -18,6 +18,8 @@ editor:
 
 #### Week 9 Methods & Models 
 
+[Slides](slides.html)
+
 ## Introduction
 
 Cross-validation is a fundamental statistical technique widely used in machine learning for assessing the performance and generalizability of predictive models. It involves partitioning a dataset into training and validation subsets, allowing a model to be trained on one subset while being evaluated on another. 
@@ -52,7 +54,7 @@ R², or the coefficient of determination, indicates how much of the variance in 
 $$
 R^2 = 1 - \frac{\sum_{i=1}^{n} (y_i - \hat{y}_i)^2}{\sum_{i=1}^{n} (y_i - \bar{y})^2}
 $$
-where $\bar{y}$ is the mean of the observed values.
+where $\bar{y}$ is the mean of the actual values.
 
 ##  k-Fold Cross-validation
 
@@ -292,7 +294,6 @@ summary(model_train)
 $$M_s = 746.99 - 254.85 C - 24.24 Mn - 13.28 Si - 7.8 Cr - 14.64 Ni $$
 This model indicates a strong relationship between the chemical compositions and the Martensite Start Temperature, with a high R-squared value signifying that approximately 74.33% of the variability in $Ms$ can be explained by the model.
   
-#### Test For Significance
 
 ####  k-fold cross-validation & calculation of RMSE, MAE, and R-squared
 
@@ -643,6 +644,6 @@ ggplot(comparison_df, aes(x = Measure_of_Error, y = Result_Value, color = Model,
 
 
 ```
-For the martensite start temperature (Ms) dataset, we compared the performance of Linear Regression and Support Vector Machine (SVM) models using three key metrics: Mean Absolute Error (MAE), R-squared (R²), and Root Mean Squared Error (RMSE), evaluated with 5-fold cross-validation. The findings clearly show that the SVM model performs better than Linear Regression in all aspects. SVM achieved a notably lower MAE (~21) compared to Linear Regression (~33), meaning its predictions were closer to the actual values. The R² for SVM (~0.9) was much higher than Linear Regression (~0.55), indicating SVM explained 90% of the data's variance, whereas Linear Regression only captured about 55%. Additionally, SVM's RMSE (~25) was significantly lower than Linear Regression’s (~48), reflecting its greater accuracy and fewer large prediction errors. Overall, SVM proved to be the more suitable model for predicting martensite start temperature, delivering more accurate and reliable results for this dataset.
+For the martensite start temperature (Ms) dataset,the performance of Linear Regression and Support Vector Machine (SVM) models using three key metrics is compared : Mean Absolute Error (MAE), R-squared (R²), and Root Mean Squared Error (RMSE), evaluated with 5-fold cross-validation. The findings clearly show that the SVM model performs better than Linear Regression in all aspects. SVM achieved a notably lower MAE (~21) compared to Linear Regression (~33), meaning its predictions were closer to the actual values. The R² for SVM (~0.9) was much higher than Linear Regression (~0.55), indicating SVM explained 90% of the data's variance, whereas Linear Regression only captured about 55%. Additionally, SVM's RMSE (~25) was significantly lower than Linear Regression’s (~48), reflecting its greater accuracy and fewer large prediction errors. Overall, SVM proved to be the more suitable model for predicting martensite start temperature, delivering more accurate and reliable results for this dataset.
 
 

@@ -1,117 +1,211 @@
 ---
 title: "Prediction of Martensite Start Temperature in Steels Using Cross Validation"
-subtitle: "This is a Slide Template"
 author: "Mounika Chevva (Advisor: Dr. Samantha Seals)"
-date: '`r Sys.Date()`'
-format:
-  revealjs
-course: Capstone Projects in Data Science
-bibliography: references.bib # file contains bibtex for references
-#always_allow_html: true # this allows to get PDF with HTML features
-self-contained: true
-execute: 
+execute:
+  echo: true
   warning: false
   message: false
-editor: 
-  markdown: 
-    wrap: 72
+  error: false
+format: 
+  revealjs:
+    theme: serif
+    embed-resources: true
+    slide-number: false
+    width: 2800
+    height: 1600
+    df-print: paged
+    html-math-method: katex
+    bibliography: references.bib 
+editor: source
+pdf-separate-fragments: true
+fig-align: center
+
+self-contained: true
+
 ---
 
-::: callout-important
-**Remember:** Your goal is to make your audience understand and care
-about your findings. By crafting a compelling story, you can effectively
-communicate the value of your data science project.
+## Introduction 
 
-Carefully read this template since it has instructions and tips to
-writing!
+#### Cross-validation Overview
 
-More information about `revealjs`:
-<https://quarto.org/docs/reference/formats/presentations/revealjs.html>
-:::
+- A statistical technique for evaluating the performance and generalizability of machine learning models.
 
-## Introduction  {.smaller}
+- Divides dataset into training and validation subsets.
 
--   Develop a storyline that captures attention and maintains interest.
+- Ensures model training on one subset and validation on another.
 
--   Your audience is your peers
+#### Advantages:
 
--   Clearly state the problem or question you're addressing.
+- Provides more reliable estimates of model performance.
 
--   Introduce why it is relevant needs.
+- Reduces bias compared to a single train-test split.
 
--   Provide an overview of your approach.
+- Improves model generalizability by leveraging different training and validation data.
 
-In kernel estimator, weight function is known as kernel function
-[@efr2008]. Cite this paper [@bro2014principal]. The GEE [@wang2014].
-The PCA [@daffertshofer2004pca]\*
 
 ## Methods
 
--   Detail the models or algorithms used.
+- K-Fold Cross-Validation: Dataset is split into $k$ folds, model is trained on $k-1$ folds and validated on the remaining fold, repeated $k$ times @Kohavi1995.
 
--   Justify your choices based on the problem and data.
+- Leave-One-Out Cross-Validation (LOOCV): A special case of K-Fold where $k$ equals the number of observations, each sample serves as the validation set once.
 
+- Nested Cross-Validation: Used for model selection and hyperparameter tuning, an outer loop for validation and an inner loop for training and hyperparameter optimization.
+
+## Model Measures of Error (MOE)
+
+- Definition: Measures of Error (MOE) quantify the difference between predicted values and actual outcomes, helping assess model performance.
+
+#### Mean Absolute Error (MAE):
+
+- Measures the average absolute errors between predicted and actual values @willmott2005advantages..
+
+$$
+\text{MAE} = \frac{1}{n} \sum_{i=1}^{n} |y_i - \hat{y}_i|
+$$
+
+where $y_i$ is the actual value, $\hat{y}_i$ is the predicted value,and $n$ is the total number of observations.
+
+#### Root Mean Squared Error (RMSE):
+
+- The square root of the MSE, providing error in the same units as the target variable @chai2014root.
+
+$$RMSE = \sqrt{\frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2}$$
+
+where $y_i$ is the observed value, $\hat{y}_i$ is the predicted value,and $n$ is the total number of observations.
+
+
+####  R-squared (R²)
+
+- Represents the proportion of variance in the dependent variable that can be explained by the independent variables @draper1998applied.
+
+$$
+R^2 = 1 - \frac{\sum_{i=1}^{n} (y_i - \hat{y}_i)^2}{\sum_{i=1}^{n} (y_i - \bar{y})^2}
+$$
+where $\bar{y}$ is the mean of the actual values.
+
+## K-Fold Cross-Validation 
+
+1. **Divide the dataset** \(D\) into \(K\) equally sized subsets (folds).
+
+2. **For each fold** \(k\) (where \(k = 1, 2, \ldots, K\)):
+   - Train the model \(M\) on the \(K - 1\) folds and validate it on the \(k\)-th fold.
+   - Calculate the performance metric \(P_k\) (e.g., accuracy, MAE) on the \(k\)-th fold.
+
+3. **The overall performance metric** is then averaged over all \(K\) folds:
+
+$$
+\text{CV}(M) = \frac{1}{K} \sum_{k=1}^{K} P_k
+$$
+
+##  Leave-One-Out Cross-Validation (LOOCV)
+
+1. **Divide the dataset** \(D\) into \(n\) subsets (where \(n\) is the number of observations).
+
+2. **For each observation** \(i\) (where \(i = 1, 2, \ldots, n\)):
+   - Train the model \(M\) on the remaining \(n - 1\) observations.
+   - Validate the model on the \(i\)-th observation.
+   - Calculate the performance metric \(P_i\) (e.g., accuracy, MAE) on the \(i\)-th observation.
+
+3. **The overall performance metric** is then averaged over all \(n\) observations:
+
+$$
+\text{LOOCV}(M) = \frac{1}{n} \sum_{i=1}^{n} P_i
+$$
+
+## Nested Cross-Validation (Nested CV)
+
+1. **Outer Loop**:
+   - Divide the dataset \(D\) into \(K\) outer folds.
+   - For each outer fold \(k\) (where \(k = 1, 2, \ldots, K\)):
+     - Reserve the \(k\)-th fold as the validation set.
+     - Use the remaining \(K - 1\) folds as the training set.
+
+2. **Inner Loop**:
+   - For each training set from the outer loop, perform \(M\) inner folds:
+     - Divide the training set into \(M\) inner folds.
+     - For each inner fold \(j\) (where \(j = 1, 2, \ldots, M\)):
+       - Train the model \(M\) on the \(M - 1\) inner folds.
+       - Validate it on the \(j\)-th inner fold.
+       - Calculate the performance metric \(P_{kj}\) on the \(j\)-th inner fold.
+
+3. **Performance Metrics**:
+   - Average the inner loop performance metrics for each outer fold:
+   
+   $$
+   \text{Inner CV}(M) = \frac{1}{M} \sum_{j=1}^{M} P_{kj}
+   $$
+   
+   - The overall performance metric of the model is averaged over all outer folds:
+   
+   $$
+   \text{Nested CV}(M) = \frac{1}{K} \sum_{k=1}^{K} \text{Inner CV}(M)
+   $$
 
 
 ## Data Exploration and Visualization
 
--   Describe your data sources and collection process.
+In our study, we analyzed a dataset from @wentzien2024machine Martensite dataset focuses on predicting the Martensite Start Temperature (Ms) in steel alloys based on their chemical compositions. 
 
--   Present initial findings and insights through visualizations.
+- Martensite start temperature (Ms) is  target variable.
+- "C","Mn","Si","Cr","Ni" are Predictor variables
 
--   Highlight unexpected patterns or anomalies.
 
-## Data Exploration and Visualization {.smaller}
+![Correlation Image](C:/Users/LaptopUser/Documents/IDC6940_CrossValidation7/correlation.png)
 
-A study was conducted to determine how...
-
-```{r, warning=FALSE, echo=F, message=FALSE}
-# loading packages 
-library(tidyverse)
-library(knitr)
-library(ggthemes)
-library(ggrepel)
-library(dslabs)
-```
-
-```{r, warning=FALSE, echo=F}
-# Load Data
-#kable(head(murders))
-
-ggplot1 = murders %>% ggplot(mapping = aes(x=population/10^6, y=total)) 
-
-  ggplot1 + geom_point(aes(col=region), size = 4) +
-  geom_text_repel(aes(label=abb)) +
-  scale_x_log10() +
-  scale_y_log10() +
-  geom_smooth(formula = "y~x", method=lm,se = F)+
-  xlab("Populations in millions (log10 scale)") + 
-  ylab("Total number of murders (log10 scale)") +
-  ggtitle("US Gun Murders in 2010") +
-  scale_color_discrete(name = "Region")+
-      theme_bw()
-  
-
-```
 
 ## Modeling and Results
 
--   Explain your data preprocessing and cleaning steps.
+### Linear Regression Model
 
--   Present your key findings in a clear and concise manner.
+ $$ M_s = \beta_0 +\beta_1 C +\beta_2 Mn + \beta_3 Si + \beta_4 Cr + \beta_5 Ni $$
+ 
+ 
+ $$M_s = 746.99 - 254.85 C - 24.24 Mn - 13.28 Si - 7.8 Cr - 14.64 Ni $$
+ 
+![Coefficients Image](C:/Users/LaptopUser/Documents/IDC6940_CrossValidation7/coefficients.png)
 
--   Use visuals to support your claims.
+***Statistics***
 
--   **Tell a story about what the data reveals.**
+Residual standard error: 54.28 on 1230 degrees of freedom
 
-```{r}
+Multiple R-squared:  0.7433,
 
-```
+Adjusted R-squared:  0.7422 
 
-## Conclusion
+F-statistic: 712.2 on 5 and 1230 DF,  
 
--   Summarize your key findings.
+p-value: < 2.2e-16
 
--   Discuss the implications of your results.
+
+## Cross Validation Results for Linear Regression
+
+![Linear Regression Cross-Validation](C:/Users/LaptopUser/Documents/IDC6940_CrossValidation7/LR_CV.png)
+
+
+## Support Vector Machines (SVM) for Regression (SVR)
+
+![SVM K-Fold Cross-Validation](C:/Users/LaptopUser/Documents/IDC6940_CrossValidation7/SVM_Kfold.png)
+
+
+![SVM LOOCV Cross-Validation](C:/Users/LaptopUser/Documents/IDC6940_CrossValidation7/SVM_LOOCV.png)
+
+
+![SVM Nested Cross-Validation](C:/Users/LaptopUser/Documents/IDC6940_CrossValidation7/SVM_Nested.png)
+
+
+## Model Comparision
+
+![Model Comparison](C:/Users/LaptopUser/Documents/IDC6940_CrossValidation7/ModelComparision.png)
+
+
+## Model Comparision Plot
+
+![Model Comparison Plot](C:/Users/LaptopUser/Documents/IDC6940_CrossValidation7/ModelComparision_plot.png)
+
+
+
+
+
+
 
 ## References

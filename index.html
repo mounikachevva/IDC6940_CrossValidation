@@ -3276,6 +3276,7 @@ window.Quarto = {
 
 <section id="week-9-methods-models" class="level4">
 <h4 class="anchored" data-anchor-id="week-9-methods-models">Week 9 Methods &amp; Models</h4>
+<p><a href="slides.html">Slides</a></p>
 </section>
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
@@ -3301,7 +3302,7 @@ window.Quarto = {
 <h3 class="anchored" data-anchor-id="r-squared-r²">R-squared (R²)</h3>
 <p>R², or the coefficient of determination, indicates how much of the variance in the dependent variable can be explained by the independent variables in a model. While it’s a popular metric for assessing how well a model fits the data, Draper and Smith (1998) <span class="citation" data-cites="draper1998applied">Draper and Smith (<a href="#ref-draper1998applied" role="doc-biblioref">1998</a>)</span> warn that R² can sometimes be misleading, particularly in the context of non-linear models. Therefore, while R² can provide valuable insights, it should be interpreted with caution and in conjunction with other performance metrics to ensure a comprehensive evaluation of model performance. <span class="math display">\[
 R^2 = 1 - \frac{\sum_{i=1}^{n} (y_i - \hat{y}_i)^2}{\sum_{i=1}^{n} (y_i - \bar{y})^2}
-\]</span> where <span class="math inline">\(\bar{y}\)</span> is the mean of the observed values.</p>
+\]</span> where <span class="math inline">\(\bar{y}\)</span> is the mean of the actual values.</p>
 </section>
 </section>
 <section id="k-fold-cross-validation" class="level2">
@@ -3621,9 +3622,6 @@ F-statistic: 712.2 on 5 and 1230 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
 <p><span class="math display">\[ M_s = \beta_0 +\beta_1 C +\beta_2 Mn + \beta_3 Si + \beta_4 Cr + \beta_5 Ni \]</span> <span class="math display">\[M_s = 746.99 - 254.85 C - 24.24 Mn - 13.28 Si - 7.8 Cr - 14.64 Ni \]</span> This model indicates a strong relationship between the chemical compositions and the Martensite Start Temperature, with a high R-squared value signifying that approximately 74.33% of the variability in <span class="math inline">\(Ms\)</span> can be explained by the model.</p>
-</section>
-<section id="test-for-significance" class="level4">
-<h4 class="anchored" data-anchor-id="test-for-significance">Test For Significance</h4>
 </section>
 <section id="k-fold-cross-validation-calculation-of-rmse-mae-and-r-squared" class="level4">
 <h4 class="anchored" data-anchor-id="k-fold-cross-validation-calculation-of-rmse-mae-and-r-squared">k-fold cross-validation &amp; calculation of RMSE, MAE, and R-squared</h4>
@@ -4263,7 +4261,7 @@ The final values used for the model were sigma = 0.9495694 and C = 1.</code></pr
 </div>
 </div>
 </div>
-<p>For the martensite start temperature (Ms) dataset, we compared the performance of Linear Regression and Support Vector Machine (SVM) models using three key metrics: Mean Absolute Error (MAE), R-squared (R²), and Root Mean Squared Error (RMSE), evaluated with 5-fold cross-validation. The findings clearly show that the SVM model performs better than Linear Regression in all aspects. SVM achieved a notably lower MAE (~21) compared to Linear Regression (~33), meaning its predictions were closer to the actual values. The R² for SVM (~0.9) was much higher than Linear Regression (~0.55), indicating SVM explained 90% of the data’s variance, whereas Linear Regression only captured about 55%. Additionally, SVM’s RMSE (~25) was significantly lower than Linear Regression’s (~48), reflecting its greater accuracy and fewer large prediction errors. Overall, SVM proved to be the more suitable model for predicting martensite start temperature, delivering more accurate and reliable results for this dataset.</p>
+<p>For the martensite start temperature (Ms) dataset,the performance of Linear Regression and Support Vector Machine (SVM) models using three key metrics is compared : Mean Absolute Error (MAE), R-squared (R²), and Root Mean Squared Error (RMSE), evaluated with 5-fold cross-validation. The findings clearly show that the SVM model performs better than Linear Regression in all aspects. SVM achieved a notably lower MAE (~21) compared to Linear Regression (~33), meaning its predictions were closer to the actual values. The R² for SVM (~0.9) was much higher than Linear Regression (~0.55), indicating SVM explained 90% of the data’s variance, whereas Linear Regression only captured about 55%. Additionally, SVM’s RMSE (~25) was significantly lower than Linear Regression’s (~48), reflecting its greater accuracy and fewer large prediction errors. Overall, SVM proved to be the more suitable model for predicting martensite start temperature, delivering more accurate and reliable results for this dataset.</p>
 
 </section>
 </section>
