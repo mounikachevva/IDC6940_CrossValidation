@@ -1,19 +1,22 @@
 ---
 title: "Prediction of Martensite Start Temperature in Steels Using Cross Validation"
 author: "Mounika Chevva (Advisor: Dr. Samantha Seals)"
+date: 'today'
 execute:
   echo: true
   warning: false
   message: false
   error: false
+  
 format: 
   revealjs:
     theme: serif
     embed-resources: true
-    slide-number: false
-    width: 2800
-    height: 1600
+    slide-number: true
+    width: 2000
+    height: 1000
     df-print: paged
+    scrollable: true
     html-math-method: katex
     bibliography: references.bib 
 editor: source
@@ -55,6 +58,8 @@ self-contained: true
 
 - Definition: Measures of Error (MOE) quantify the difference between predicted values and actual outcomes, helping assess model performance.
 
+::: {.panel-tabset}
+
 #### Mean Absolute Error (MAE):
 
 - Measures the average absolute errors between predicted and actual values @willmott2005advantages..
@@ -83,7 +88,14 @@ R^2 = 1 - \frac{\sum_{i=1}^{n} (y_i - \hat{y}_i)^2}{\sum_{i=1}^{n} (y_i - \bar{y
 $$
 where $\bar{y}$ is the mean of the actual values.
 
-## K-Fold Cross-Validation 
+:::
+
+
+## Cross Validation Methods
+
+::: {.panel-tabset}
+
+### K-Fold Cross-Validation 
 
 1. **Divide the dataset** \(D\) into \(K\) equally sized subsets (folds).
 
@@ -97,7 +109,7 @@ $$
 \text{CV}(M) = \frac{1}{K} \sum_{k=1}^{K} P_k
 $$
 
-##  Leave-One-Out Cross-Validation (LOOCV)
+###  Leave-One-Out Cross-Validation (LOOCV)
 
 1. **Divide the dataset** \(D\) into \(n\) subsets (where \(n\) is the number of observations).
 
@@ -112,7 +124,7 @@ $$
 \text{LOOCV}(M) = \frac{1}{n} \sum_{i=1}^{n} P_i
 $$
 
-## Nested Cross-Validation (Nested CV)
+### Nested Cross-Validation (Nested CV)
 
 1. **Outer Loop**:
    - Divide the dataset \(D\) into \(K\) outer folds.
@@ -141,6 +153,7 @@ $$
    \text{Nested CV}(M) = \frac{1}{K} \sum_{k=1}^{K} \text{Inner CV}(M)
    $$
 
+:::
 
 ## Data Exploration and Visualization
 
@@ -150,7 +163,7 @@ In our study, we analyzed a dataset from @wentzien2024machine Martensite dataset
 - "C","Mn","Si","Cr","Ni" are Predictor variables
 
 
-![Correlation Image](C:/Users/LaptopUser/Documents/IDC6940_CrossValidation7/correlation.png)
+![Correlation Image](C:/Users/LaptopUser/Documents/IDC6940_CrossValidation/correlation.png)
 
 
 ## Modeling and Results
@@ -162,7 +175,7 @@ In our study, we analyzed a dataset from @wentzien2024machine Martensite dataset
  
  $$M_s = 746.99 - 254.85 C - 24.24 Mn - 13.28 Si - 7.8 Cr - 14.64 Ni $$
  
-![Coefficients Image](C:/Users/LaptopUser/Documents/IDC6940_CrossValidation7/coefficients.png)
+![Coefficients Image](C:/Users/LaptopUser/Documents/IDC6940_CrossValidation/coefficients.png)
 
 ***Statistics***
 
@@ -179,28 +192,36 @@ p-value: < 2.2e-16
 
 ## Cross Validation Results for Linear Regression
 
-![Linear Regression Cross-Validation](C:/Users/LaptopUser/Documents/IDC6940_CrossValidation7/LR_CV.png)
+![Linear Regression Cross-Validation](C:/Users/LaptopUser/Documents/IDC6940_CrossValidation/LR_CV.png)
 
 
 ## Support Vector Machines (SVM) for Regression (SVR)
 
-![SVM K-Fold Cross-Validation](C:/Users/LaptopUser/Documents/IDC6940_CrossValidation7/SVM_Kfold.png)
+::: {.panel-tabset}
+
+### SVM K-Fold Cross-Validation
+
+![SVM K-Fold Cross-Validation](C:/Users/LaptopUser/Documents/IDC6940_CrossValidation/SVM_Kfold.png)
 
 
-![SVM LOOCV Cross-Validation](C:/Users/LaptopUser/Documents/IDC6940_CrossValidation7/SVM_LOOCV.png)
+### SVM LOOCV Cross-Validation
+
+![SVM LOOCV Cross-Validation](C:/Users/LaptopUser/Documents/IDC6940_CrossValidation/SVM_LOOCV.png)
 
 
-![SVM Nested Cross-Validation](C:/Users/LaptopUser/Documents/IDC6940_CrossValidation7/SVM_Nested.png)
+### SVM Nested Cross-Validation
 
+![SVM Nested Cross-Validation](C:/Users/LaptopUser/Documents/IDC6940_CrossValidation/SVM_Nested.png)
+::: 
 
-## Model Comparision
+## Model Comparision Results
 
-![Model Comparison](C:/Users/LaptopUser/Documents/IDC6940_CrossValidation7/ModelComparision.png)
+![Model Comparison](C:/Users/LaptopUser/Documents/IDC6940_CrossValidation/ModelComparision.png)
 
 
 ## Model Comparision Plot
 
-![Model Comparison Plot](C:/Users/LaptopUser/Documents/IDC6940_CrossValidation7/ModelComparision_plot.png)
+![Model Comparison Plot](C:/Users/LaptopUser/Documents/IDC6940_CrossValidation/ModelComparision_plot.png)
 
 
 

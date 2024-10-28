@@ -1,7 +1,7 @@
 ---
 title: "Prediction of Martensite Start Temperature in Steels Using Cross Validation"
 author: "Mounika Chevva (Advisor: Dr. Samantha Seals)"
-date: " 10/20/2024"
+date: 'today'
 format:
   html:
     code-fold: true
@@ -16,7 +16,7 @@ editor:
     wrap: 72
 ---
 
-#### Week 9 Methods & Models 
+#### Week 10 Methods & Models 
 
 [Slides](slides.html)
 
@@ -128,7 +128,7 @@ In our study, we analyzed a dataset from @wentzien2024machine Martensite dataset
 ```{r}
 library(readr)
 
-Martensite <- read.csv("/Users/LaptopUser/Downloads/dataset.csv/Martensite Start-Temp.csv")
+Martensite <- read.csv("C:/Users/LaptopUser/Documents/IDC6940_CrossValidation/Martensite Start-Temp.csv")
 
 #head(Martensite)
 #str(Martensite)
@@ -201,19 +201,27 @@ The output [1] 0 from sum(is.na(Martensite)) indicates that there are no missing
 
 #### Histogram for Martensite Start Temperature 
 
-```{r}
+```{r Ms-distribution, fig.cap="Figure 1: Distribution of Martensite Start Temperature (Ms)"}
+
 library(ggplot2)
-ggplot(Martensite, aes(x = Ms)) +
+Ms_distribution <- ggplot(Martensite, aes(x = Ms)) +
   geom_histogram(binwidth = 10, fill = "blue", color = "black", alpha = 0.7) +
   labs(title = "Distribution of Martensite Start Temperature (Ms)", x = "Martensite Start Temperature", y = "Frequency")
+
+Ms_distribution
+
+ggsave(filename = "Ms_distribution.png", plot = Ms_distribution, width = 8, height = 6, dpi = 300)
+
+
+
 ```
-The histogram describes  the distribution of Martensite Start Temperature (Ms) values, ranging from 200 to 800°C. It shows a bimodal distribution with peaks around 400-450°C and 600-650°C, indicating two predominant temperature ranges. 
+The histogram describes  the distribution of Martensite Start Temperature (Ms) values[Figure 1: Distribution of Martensite Start Temperature (Ms)](Ms_distribution.png), ranging from 200 to 800°C. It shows a bimodal distribution with peaks around 400-450°C and 600-650°C, indicating two predominant temperature ranges. 
 
 #### Correlation matrix 
 
-The correlation matrix is a powerful tool used to visualize and quantify the relationships between key variables
+The correlation matrix is a powerful tool used to visualize and quantify the relationships between key variables[Figure 2: Correlation_Matrix](correlation_matrix_plot.png)
 
-```{r}
+```{r correlation-matrix, fig.cap="Figure 2: Correlation_Matrix"}
 library(ggplot2)
 library(reshape2)
 library(corrplot)
@@ -222,7 +230,11 @@ correlation_matrix <- cor(Martensite, use = "complete.obs")
 
 #print(correlation_matrix)
 
+corr_plot <- corrplot(correlation_matrix, method = "circle")
+png("correlation_matrix_plot.png", width = 900, height = 1000)
 corrplot(correlation_matrix, method = "circle")
+dev.off()
+
 ```
 
 #### Insights from correlation matrix 
@@ -241,12 +253,18 @@ The relationships identified here can be utilized to build predictive models for
 
 #### Boxplot for Ms vs Carbon (C)
 
-This boxplot graph illustrates the relationship between the Martensite Start Temperature (Ms) and Carbon content in percentage (%)
+This boxplot graph illustrates the relationship between the Martensite Start Temperature (Ms) and Carbon content in percentage (%) [Figure 3: Boxplot of Martensite Ms vs Carbon](Ms_vs_Carbon_boxplot.png)
 
-```{r}
-ggplot(Martensite, aes(x = as.factor(C), y = Ms)) +
+```{r Ms-vs-C, fig.cap="Figure 3: Boxplot of Martensite Ms vs Carbon"}
+
+Ms_vs_C <- ggplot(Martensite, aes(x = as.factor(C), y = Ms)) +
   geom_boxplot(fill = "red") +
   labs(title = "Boxplot of Martensite Ms vs Carbon", x = "Carbon (%)", y = "Martensite Start Temperature (Ms)")
+
+Ms_vs_C
+
+ggsave(filename = "Ms_vs_Carbon_boxplot.png", plot = Ms_vs_C, width = 8, height = 6, dpi = 300)
+
 
 ```
 
@@ -287,7 +305,18 @@ model_train <- train(Ms ~ C + Mn + Si + Cr + Ni,
                data = train_data, 
                method = "lm")
 
-summary(model_train)
+model_summary <- summary(model_train$finalModel)
+
+coefficients_table <- data.frame(
+  Term = rownames(model_summary$coefficients),
+  Estimate = model_summary$coefficients[, "Estimate"],
+  Std_Error = model_summary$coefficients[, "Std. Error"],
+  t_value = model_summary$coefficients[, "t value"],
+  p_value = model_summary$coefficients[, "Pr(>|t|)"]
+)
+rownames(coefficients_table) <- NULL
+
+kable(coefficients_table, caption = "Linear Regression Model Coefficients")
 
 ```
  $$ M_s = \beta_0 +\beta_1 C +\beta_2 Mn + \beta_3 Si + \beta_4 Cr + \beta_5 Ni $$
@@ -422,7 +451,7 @@ result_wide_df <- result_long_df %>%
 result_wide_df %>% kable()
 ```
 
-```{r}
+```{r Results, fig.cap="Figure 4: Cross-Validation Results: Linear Model"}
 library(ggplot2)
 library(dplyr)
 
@@ -431,8 +460,8 @@ result_long_df <- result_long_df %>%
 
 line_plot <- result_long_df %>%
   ggplot(aes(x = Method, y = Result_Value, group = Measure_of_Error, color = Measure_of_Error)) +
-  geom_line(size = 1.2) + # Line for each measure of error
-  geom_point(size = 3) +  # Points for each measure of error
+  geom_line(size = 1.2) + 
+  geom_point(size = 3) +  
   labs(title = "Cross-Validation Results: Linear Model",
        x = "Cross-Validation Method",
        y = "Mean Error") +
@@ -444,10 +473,13 @@ line_plot <- result_long_df %>%
 
 print(line_plot)
 
+ggsave(filename = "cross_validation_results_line_plot.png", plot = line_plot, width = 8, height = 6, dpi = 300)
+
+
 ```
 ## Model Performance Analysis
 
-The results of this analysis reveal that the models tested with 5-Fold Cross-Validation (5-Fold CV) and Leave-One-Out Cross-Validation (LOOCV) demonstrate impressive predictive accuracy. These two models consistently outshine the Nested CV model, indicating that they are more dependable for making predictions from the dataset.
+The results of this analysis [Figure 4: Cross-Validation Results: Linear Model](cross_validation_results_line_plot.png) reveal that the models tested with 5-Fold Cross-Validation (5-Fold CV) and Leave-One-Out Cross-Validation (LOOCV) demonstrate impressive predictive accuracy. These two models consistently outshine the Nested CV model, indicating that they are more dependable for making predictions from the dataset.
 
 ## Binary Outcomes
 
@@ -600,10 +632,11 @@ kable(nested_cv_df)
 
 
 ```
+## Table 
 
 ### Model Comparision
 
-```{r}
+```{r }
 
 library(tidyr)
 
@@ -621,9 +654,9 @@ Comparison_df %>%
 
 ```
 
-### Model Comparision Plot
+### Model Comparison Plot
 
-```{r}
+```{r Model-Comparison, fig.cap="Figure 5: Model Comparison: Linear Regression vs SVM (K-Fold CV, k=5)"}
 
 library(ggplot2)
 library(dplyr)
@@ -633,7 +666,7 @@ kfold_svm_df <- svr_kfold_df %>% mutate(Model = "SVM")
 
 comparison_df <- bind_rows(kfold_linear_df, kfold_svm_df)
 
-ggplot(comparison_df, aes(x = Measure_of_Error, y = Result_Value, color = Model, group = Model)) +
+comparison_plot <- ggplot(comparison_df, aes(x = Measure_of_Error, y = Result_Value, color = Model, group = Model)) +
   geom_line(size = 1.2) +                   
   geom_point(size = 3) +                  
   labs(title = "Model Comparison: Linear Regression vs SVM (K-Fold CV, k=5)",
@@ -642,8 +675,11 @@ ggplot(comparison_df, aes(x = Measure_of_Error, y = Result_Value, color = Model,
   theme_minimal() +
   theme(legend.title = element_blank())    
 
+print(comparison_plot)
+
+ggsave(filename = "model_comparison_plot.png", plot = comparison_plot, width = 8, height = 6, dpi = 400)
 
 ```
-For the martensite start temperature (Ms) dataset,the performance of Linear Regression and Support Vector Machine (SVM) models using three key metrics is compared : Mean Absolute Error (MAE), R-squared (R²), and Root Mean Squared Error (RMSE), evaluated with 5-fold cross-validation. The findings clearly show that the SVM model performs better than Linear Regression in all aspects. SVM achieved a notably lower MAE (~21) compared to Linear Regression (~33), meaning its predictions were closer to the actual values. The R² for SVM (~0.9) was much higher than Linear Regression (~0.55), indicating SVM explained 90% of the data's variance, whereas Linear Regression only captured about 55%. Additionally, SVM's RMSE (~25) was significantly lower than Linear Regression’s (~48), reflecting its greater accuracy and fewer large prediction errors. Overall, SVM proved to be the more suitable model for predicting martensite start temperature, delivering more accurate and reliable results for this dataset.
+For the martensite start temperature (Ms) dataset,the performance of Linear Regression and Support Vector Machine (SVM) models using three key metrics is compared [Figure 5: Model Comparison: Linear Regression vs SVM (K-Fold CV, k=5)](model_comparison_plot.png) : Mean Absolute Error (MAE), R-squared (R²), and Root Mean Squared Error (RMSE), evaluated with 5-fold cross-validation. The findings clearly show that the SVM model performs better than Linear Regression in all aspects. SVM achieved a notably lower MAE (~21) compared to Linear Regression (~33), meaning its predictions were closer to the actual values. The R² for SVM (~0.9) was much higher than Linear Regression (~0.55), indicating SVM explained 90% of the data's variance, whereas Linear Regression only captured about 55%. Additionally, SVM's RMSE (~25) was significantly lower than Linear Regression’s (~48), reflecting its greater accuracy and fewer large prediction errors. Overall, SVM proved to be the more suitable model for predicting martensite start temperature, delivering more accurate and reliable results for this dataset.
 
 
