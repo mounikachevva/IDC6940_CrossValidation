@@ -171,7 +171,7 @@ In our study, we analyzed a dataset from @wentzien2024machine Martensite dataset
 ### Linear Regression Model
 
  $$ M_s = \beta_0 +\beta_1 C +\beta_2 Mn + \beta_3 Si + \beta_4 Cr + \beta_5 Ni $$
- 
+
  
  $$M_s = 746.99 - 254.85 C - 24.24 Mn - 13.28 Si - 7.8 Cr - 14.64 Ni $$
  
