@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Mounika Chevva (Advisor: Dr. Samantha Seals)">
-<meta name="dcterms.date" content="2024-10-27">
+<meta name="dcterms.date" content="2024-11-03">
 
 <title>Prediction of Martensite Start Temperature in Steels Using Cross Validation</title>
 <style>
@@ -3262,7 +3262,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 27, 2024</p>
+      <p class="date">November 3, 2024</p>
     </div>
   </div>
   
@@ -3274,10 +3274,7 @@ window.Quarto = {
 </header>
 
 
-<section id="week-10-methods-models" class="level4">
-<h4 class="anchored" data-anchor-id="week-10-methods-models">Week 10 Methods &amp; Models</h4>
 <p><a href="slides.html">Slides</a></p>
-</section>
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <p>Cross-validation is a fundamental statistical technique widely used in machine learning for assessing the performance and generalizability of predictive models. It involves partitioning a dataset into training and validation subsets, allowing a model to be trained on one subset while being evaluated on another.</p>
@@ -3971,14 +3968,6 @@ R^2 = 1 - \frac{\sum_{i=1}^{n} (y_i - \hat{y}_i)^2}{\sum_{i=1}^{n} (y_i - \bar{y
 <section id="model-performance-analysis" class="level2">
 <h2 class="anchored" data-anchor-id="model-performance-analysis">Model Performance Analysis</h2>
 <p>The results of this analysis <a href="cross_validation_results_line_plot.png">Figure 4: Cross-Validation Results: Linear Model</a> reveal that the models tested with 5-Fold Cross-Validation (5-Fold CV) and Leave-One-Out Cross-Validation (LOOCV) demonstrate impressive predictive accuracy. These two models consistently outshine the Nested CV model, indicating that they are more dependable for making predictions from the dataset.</p>
-</section>
-<section id="binary-outcomes" class="level2">
-<h2 class="anchored" data-anchor-id="binary-outcomes">Binary Outcomes</h2>
-<section id="why-cant-we-use-linear-regression-for-binary-outcomes" class="level3">
-<h3 class="anchored" data-anchor-id="why-cant-we-use-linear-regression-for-binary-outcomes">Why can’t we use Linear regression for Binary Outcomes</h3>
-<p>Linear regression assumes a continuous and normally distributed outcome, which doesn’t hold true for binary data (e.g., 0 or 1).This can result in predicted values falling outside the 0-1 range, making them meaningless in a binary context. The coefficients in linear regression are interpreted as the change in the dependent variable for a one-unit change in the predictor.</p>
-<p>Since our target variable is continuous, it means it can take on a wide range of values (e.g., temperature ). In this case, using techniques suitable for continuous outcomes, a linear regression, is appropriate.</p>
-</section>
 </section>
 <section id="support-vector-machines-svm-for-regression-svr" class="level2">
 <h2 class="anchored" data-anchor-id="support-vector-machines-svm-for-regression-svr">Support Vector Machines (SVM) for Regression (SVR)</h2>

@@ -16,7 +16,6 @@ editor:
     wrap: 72
 ---
 
-#### Week 10 Methods & Models 
 
 [Slides](slides.html)
 
@@ -481,13 +480,6 @@ ggsave(filename = "cross_validation_results_line_plot.png", plot = line_plot, wi
 
 The results of this analysis [Figure 4: Cross-Validation Results: Linear Model](cross_validation_results_line_plot.png) reveal that the models tested with 5-Fold Cross-Validation (5-Fold CV) and Leave-One-Out Cross-Validation (LOOCV) demonstrate impressive predictive accuracy. These two models consistently outshine the Nested CV model, indicating that they are more dependable for making predictions from the dataset.
 
-## Binary Outcomes
-
-### Why can't we use Linear regression for Binary Outcomes
-
-Linear regression assumes a continuous and normally distributed outcome, which doesn't hold true for binary data (e.g., 0 or 1).This can result in predicted values falling outside the 0-1 range, making them meaningless in a binary context. The coefficients in linear regression are interpreted as the change in the dependent variable for a one-unit change in the predictor. 
-
-Since our target variable is continuous, it means it can take on a wide range of values (e.g., temperature ). In this case, using techniques suitable for continuous outcomes, a linear regression, is appropriate.
 
 ##  Support Vector Machines (SVM) for Regression (SVR)
 
