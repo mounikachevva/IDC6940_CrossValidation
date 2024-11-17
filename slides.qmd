@@ -161,7 +161,7 @@ In our study, we analyzed a dataset from @wentzien2024machine Martensite dataset
 
 - Martensite start temperature (Ms) is  target variable.
 - "C","Mn","Si","Cr","Ni" are Predictor variables
-```{r correlation-matrix, echo=FALSE, message=FALSE, warning=FALSE, fig.cap="Figure 2: Correlation_Matrix"}
+```{r correlation-matrix, echo=FALSE, message=FALSE, warning=FALSE, fig.cap="Correlation_Matrix"}
 library(ggplot2)
 library(reshape2)
 library(corrplot)
@@ -190,6 +190,40 @@ In our dataset, which focuses on predicting the Martensite Start Temperature (Ms
  
  $$M_s = 746.99 - 254.85 C - 24.24 Mn - 13.28 Si - 7.8 Cr - 14.64 Ni $$
  
+```{r Linear Regression Coefficients, echo=FALSE, message=FALSE, warning=FALSE, fig.cap="Linear Regression Coefficients"}
+library(caret)
+library(dplyr)
+library(knitr)
+
+library(tidyr)
+
+predictors <- Martensite[, c("C","Mn","Si","Cr","Ni")]
+target <- Martensite$Ms 
+data_combined <- data.frame(predictors, Ms = target)
+
+
+set.seed(123)
+trainIndex <- createDataPartition(data_combined$Ms, p = .8, list = FALSE, times = 1)
+train_data <- data_combined[trainIndex,]
+test_data <- data_combined[-trainIndex,]
+
+model_train <- train(Ms ~ C + Mn + Si + Cr + Ni, 
+               data = train_data, 
+               method = "lm")
+
+model_summary <- summary(model_train$finalModel)
+
+coefficients_table <- data.frame(
+  Term = rownames(model_summary$coefficients),
+  Estimate = model_summary$coefficients[, "Estimate"],
+  Std_Error = model_summary$coefficients[, "Std. Error"],
+  t_value = model_summary$coefficients[, "t value"],
+  p_value = model_summary$coefficients[, "Pr(>|t|)"]
+)
+rownames(coefficients_table) <- NULL
+
+kable(coefficients_table, caption = "Linear Regression Model Coefficients")
+```
 
 ***Statistics***
 
@@ -208,7 +242,118 @@ p-value: < 2.2e-16
 
 The results of this analysis reveal that the models tested with 5-Fold Cross-Validation (5-Fold CV) and Leave-One-Out Cross-Validation (LOOCV) demonstrate impressive predictive accuracy. These two models consistently outshine the Nested CV model, indicating that they are more dependable for making predictions from the dataset.
 
-![Linear Regression Cross-Validation](C:/Users/LaptopUser/Documents/IDC6940_CrossValidation/LR_CV.png)
+::: {.panel-tabset}
+
+### K-fold Cross-Validation
+
+```{r  K Fold Cross-Validation, echo=FALSE, message=FALSE, warning=FALSE, fig.cap="K Fold Cross-Validation"}
+train_kfold <- trainControl(method = "cv", number = 5)
+
+model_kfold <- train(Ms ~ C + Mn + Si + Cr + Ni, 
+                     data = train_data, 
+                     method = "lm", 
+                     trControl = train_kfold)
+
+calculate_rmse <- function(actual, predicted) {
+  sqrt(mean((actual - predicted)^2))
+}
+
+calculate_mae <- function(actual, predicted) {
+  mean(abs(actual - predicted))
+}
+
+calculate_r2 <- function(actual, predicted) {
+  1 - sum((predicted - actual)^2) / sum((actual - mean(actual))^2)
+}
+
+kfold_predictions <- predict(model_kfold, newdata = test_data) 
+
+kfold_rmse <- calculate_rmse(test_data$Ms, kfold_predictions) %>% round(2)
+kfold_mae <- calculate_mae(test_data$Ms, kfold_predictions) %>% round(2)
+kfold_r2 <- calculate_r2(test_data$Ms, kfold_predictions) %>% round(2)
+
+Measure_of_Error <- c("RMSE", "MAE", "R2")
+Result_Value <- c(kfold_rmse, kfold_mae, kfold_r2)
+kfold_df <- data.frame(Measure_of_Error, Result_Value) 
+
+kfold_df %>% kable()
+
+
+
+```
+
+### LOOCV Cross-Validation
+
+```{r LOOCV Cross-Validation, echo=FALSE, message=FALSE, warning=FALSE, fig.cap="LOOCV Cross-Validation"}
+
+
+train_control_loocv <- trainControl(method = "LOOCV")
+
+model_loocv <- train(Ms ~ C + Mn + Si + Cr + Ni, 
+                     data = train_data, 
+                     method = "lm", 
+                     trControl = train_control_loocv)
+
+loocv_predictions <- predict(model_loocv, newdata = test_data)
+
+loocv_rmse <- calculate_rmse(test_data$Ms, loocv_predictions) %>% round(2)
+loocv_mae <- calculate_mae(test_data$Ms, loocv_predictions) %>% round(2)
+loocv_r2 <- calculate_r2(test_data$Ms, loocv_predictions) %>% round(2)
+
+Measure_of_Error <- c("RMSE", "MAE", "R2")
+Result_Value <- c(loocv_rmse, loocv_mae, loocv_r2)
+loocv_df <- data.frame(Measure_of_Error, Result_Value) 
+
+
+loocv_df %>% kable()
+
+```
+### Nested Cross-Validation
+
+```{r Nested Cross-Validation, echo=FALSE, message=FALSE, warning=FALSE, fig.cap="Nested Cross-Validation"}
+
+set.seed(123)
+outer_train_control <- trainControl(method = "cv", number = 5)
+inner_train_control <- trainControl(method = "cv", number = 5)
+
+nested_model <- function(data, indices) {
+  train_data <- data[indices,]
+  test_data <- data[-indices,]
+  
+  model <- train(Ms ~ C + Mn + Si + Cr + Ni, 
+                 data = train_data, 
+                 method = "lm", 
+                 trControl = inner_train_control)
+  
+  predictions <- predict(model, newdata = test_data)
+  
+  rmse <- calculate_rmse(test_data$Ms, predictions)
+  mae <- calculate_mae(test_data$Ms, predictions)
+  r2 <- calculate_r2(test_data$Ms, predictions)
+  
+  return(c(rmse, mae, r2))
+}
+
+
+nested_cv_indices <- createFolds(data_combined$Ms, k = 5, list = TRUE, returnTrain = TRUE)
+
+
+nested_cv_results <- t(sapply(nested_cv_indices, nested_model, data = data_combined))
+
+nested_cv_rmse <- mean(nested_cv_results[, 1]) %>% round(2)
+nested_cv_mae <- mean(nested_cv_results[, 2]) %>% round(2)
+nested_cv_r2 <- mean(nested_cv_results[, 3]) %>% round(2)
+
+Measure_of_Error <- c("RMSE", "MAE", "R2")
+Result_Value <- c(nested_cv_rmse, nested_cv_mae, nested_cv_r2)
+nested_cv_df <- data.frame(Measure_of_Error, Result_Value)
+
+nested_cv_df %>% kable()
+
+
+
+```
+::: 
 
 
 ## Support Vector Machines (SVM) for Regression (SVR)
@@ -219,31 +364,198 @@ Using our dataset, Support Vector Machines (SVM) with a radial kernel help predi
 ::: {.panel-tabset}
 
 ### SVM K-Fold Cross-Validation
+```{r SVM_K Fold Cross-Validation, echo=FALSE, message=FALSE, warning=FALSE, fig.cap="SVM_K Fold Cross-Validation"}
+library(e1071)
+library(caret)
 
-![SVM K-Fold Cross-Validation](C:/Users/LaptopUser/Documents/IDC6940_CrossValidation/SVM_Kfold.png)
+set.seed(123) 
+
+
+predictors <- Martensite[, c("C","Mn","Si","Cr","Ni")]
+target <- Martensite$Ms 
+data_combined <- data.frame(predictors, Ms = target)
+
+
+trainIndex <- createDataPartition(data_combined$Ms, p = .8, list = FALSE, times = 1)
+train_data <- data_combined[trainIndex,]
+test_data <- data_combined[-trainIndex,]
+
+svr_model <- train(Ms ~ C + Mn + Si + Cr + Ni, 
+                   data = train_data, 
+                   method = "svmRadial")  
+
+
+train_kfold <- trainControl(method = "cv", number = 5)
+
+svr_model <- train(Ms ~ C + Mn + Si + Cr + Ni, 
+                   data = train_data, 
+                   method = "svmRadial",
+                   trControl = train_kfold)
+
+svr_kfold_predictions <- predict(svr_model, newdata = test_data)
+
+calculate_rmse <- function(actual, predicted) {
+  sqrt(mean((actual - predicted)^2))
+}
+
+calculate_mae <- function(actual, predicted) {
+  mean(abs(actual - predicted))
+}
+
+calculate_r2 <- function(actual, predicted) {
+  cor(actual, predicted)^2
+}
+
+svr_kfold_rmse <- calculate_rmse(test_data$Ms, svr_kfold_predictions) %>% round(2)
+svr_kfold_mae <- calculate_mae(test_data$Ms, svr_kfold_predictions) %>% round(2)
+svr_kfold_r2 <- calculate_r2(test_data$Ms, svr_kfold_predictions) %>% round(2)
+
+Measure_of_Error <- c("RMSE", "MAE", "R2")
+Result_Value <- c(svr_kfold_rmse, svr_kfold_mae, svr_kfold_r2)
+svm_kfold_df <- data.frame(Measure_of_Error, Result_Value) 
+
+svm_kfold_df %>% kable()
+
+
+```
 
 
 ### SVM LOOCV Cross-Validation
 
-![SVM LOOCV Cross-Validation](C:/Users/LaptopUser/Documents/IDC6940_CrossValidation/SVM_LOOCV.png)
+```{r SVM_LOOCV Cross-Validation, echo=FALSE, message=FALSE, warning=FALSE, fig.cap="SVM_LOOCV Cross-Validation"}
+library(e1071)
+library(caret)
+library(dplyr)
+library(knitr)
 
+set.seed(123)
+
+train_loocv <- trainControl(method = "LOOCV")
+
+model_loocv <- train(Ms ~ C + Mn + Si + Cr + Ni, 
+                     data = train_data, 
+                     method = "svmLinear",  
+                     trControl = train_loocv)
+
+loocv_predictions <- predict(model_loocv, newdata = test_data)
+
+loocv_rmse <- sqrt(mean((test_data$Ms - loocv_predictions)^2)) %>% round(2) 
+loocv_mae <- mean(abs(test_data$Ms - loocv_predictions)) %>% round(2) 
+loocv_r2 <- cor(test_data$Ms, loocv_predictions)^2 %>% round(2) 
+
+Measure_of_Error <- c("RMSE", "MAE", "R2")
+Result_Value <- c(loocv_rmse, loocv_mae, loocv_r2)
+svm_loocv_df <- data.frame(Measure_of_Error, Result_Value) 
+
+kable(svm_loocv_df)
+
+
+```
 
 ### SVM Nested Cross-Validation
 
-![SVM Nested Cross-Validation](C:/Users/LaptopUser/Documents/IDC6940_CrossValidation/SVM_Nested.png)
+```{r SVM_Nested Cross-Validation, echo=FALSE, message=FALSE, warning=FALSE, fig.cap="SVM_Nested Cross-Validation"}
+set.seed(123)
+
+outer_train_control <- trainControl(method = "cv", number = 5)
+
+inner_train_control <- trainControl(method = "cv", number = 5)
+
+nested_svm <- function(data, indices) {
+  train_data <- data[indices,]
+  test_data <- data[-indices,]
+
+
+ model <- train(Ms ~ C + Mn + Si + Cr + Ni, 
+                 data = train_data, 
+                 method = "svmRadial", 
+                 trControl = inner_train_control,
+                 tuneLength = 3) 
+   predictions <- predict(model, newdata = test_data)
+rmse <- sqrt(mean((test_data$Ms - predictions)^2))
+  mae <- mean(abs(test_data$Ms - predictions))
+  r2 <- cor(test_data$Ms, predictions)^2
+  
+  return(c(rmse, mae, r2))
+}
+
+nested_cv_indices <- createFolds(data_combined$Ms, k = 5, list = TRUE, returnTrain = TRUE)
+
+nested_cv_results <- t(sapply(nested_cv_indices, nested_svm, data = data_combined))
+
+nested_cv_rmse <- mean(nested_cv_results[, 1]) %>% round(2)
+nested_cv_mae <- mean(nested_cv_results[, 2]) %>% round(2)
+nested_cv_r2 <- mean(nested_cv_results[, 3]) %>% round(2)
+
+Measure_of_Error <- c("RMSE", "MAE", "R2")
+Result_Value <- c(nested_cv_rmse, nested_cv_mae, nested_cv_r2)
+svm_nested_cv_df <- data.frame(Measure_of_Error, Result_Value)
+
+kable(svm_nested_cv_df)
+
+
+```
+
 ::: 
 
 ## Model Comparision Results
 
 In this study, we compared the performance of Linear Regression and Support Vector Machine (SVM) models in predicting the martensite start temperature (Ms). Using 5-fold cross-validation, we found that SVM outperformed Linear Regression, achieving a lower MAE (~21 vs ~33), a higher R² (~0.9 vs ~0.55), and a lower RMSE (~25 vs ~48), highlighting its superior accuracy and reliability in making predictions.
 
-![Model Comparison](C:/Users/LaptopUser/Documents/IDC6940_CrossValidation/ModelComparision.png)
+```{r Model Comparision Results, echo=FALSE, message=FALSE, warning=FALSE, fig.cap="Model Comparision Results" }
 
+library(tidyr)
+
+kfold_results  <- kfold_df %>% mutate(Method = "5-Fold") 
+LOOCV_results  <- loocv_df %>% mutate(Method = "LOOCV")
+nested_results <- nested_cv_df %>% mutate(Method = "Nested CV") 
+
+
+result_long_df <- combine(kfold_results, LOOCV_results, nested_results)
+
+Comparison_df <- rbind(
+  Regression_R <- cbind(result_long_df, c(replicate(length(result_long_df),"Linear_Regression"))) %>% rename(Model=4),
+  
+  
+
+SVM_KFold_R <- svm_kfold_df %>% mutate(Method = "5-Fold", Model = "SVM"),
+ SVM_LOOCV_R <- svm_loocv_df %>% mutate(Method = "LOOCV", Model = "SVM"),
+ SVM_Nest_R  <- svm_nested_cv_df %>% mutate(Method = "Nested CV", Model = "SVM")
+  ) 
+
+Comparison_df %>% 
+  pivot_wider(names_from = Model, values_from = Result_Value) %>% 
+  relocate(Method) %>% 
+  kable()
+
+```
 
 ## Model Comparision Plot
 
-![Model Comparison Plot](C:/Users/LaptopUser/Documents/IDC6940_CrossValidation/ModelComparision_plot.png)
+```{r Model Comparision Results Plot, echo=FALSE, message=FALSE, warning=FALSE, fig.cap="Model Comparision Results Plot"}
 
+library(ggplot2)
+library(dplyr)
+
+kfold_linear_df <- kfold_df %>% mutate(Model = "Linear Regression")
+kfold_svm_df <- svm_kfold_df %>% mutate(Model = "SVM")
+
+comparison_df <- bind_rows(kfold_linear_df, kfold_svm_df)
+
+comparison_plot <- ggplot(comparison_df, aes(x = Measure_of_Error, y = Result_Value, color = Model, group = Model)) +
+  geom_line(size = 1.2) +                   
+  geom_point(size = 3) +                  
+  labs(title = "Model Comparison: Linear Regression vs SVM (K-Fold CV, k=5)",
+       y = "Performance Metric Value",
+       x = "Performance Metric") +
+  theme_minimal() +
+  theme(legend.title = element_blank())    
+
+print(comparison_plot)
+
+ggsave(filename = "model_comparison_plot.png", plot = comparison_plot, width = 8, height = 6, dpi = 400)
+
+```
 ## Conclusion: Overview
 
 ### Evaluation of Two Models:
