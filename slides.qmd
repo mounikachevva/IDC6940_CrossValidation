@@ -161,21 +161,35 @@ In our study, we analyzed a dataset from @wentzien2024machine Martensite dataset
 
 - Martensite start temperature (Ms) is  target variable.
 - "C","Mn","Si","Cr","Ni" are Predictor variables
+```{r correlation-matrix, echo=FALSE, message=FALSE, warning=FALSE, fig.cap="Figure 2: Correlation_Matrix"}
+library(ggplot2)
+library(reshape2)
+library(corrplot)
+Martensite <- read.csv("C:/Users/LaptopUser/Documents/IDC6940_CrossValidation/Martensite Start-Temp.csv")
+correlation_matrix <- cor(Martensite, use = "complete.obs")
+
+#print(correlation_matrix)
+
+corr_plot <- corrplot(correlation_matrix, method = "circle")
 
 
-![Correlation Image](C:/Users/LaptopUser/Documents/IDC6940_CrossValidation/correlation.png)
+```
 
 
 ## Modeling and Results
 
 ### Linear Regression Model
 
+Linear regression is a fundamental statistical technique that establishes a relationship between a dependent variable and one or more independent variables by fitting a linear equation to observed data.
+
+In our dataset, which focuses on predicting the Martensite Start Temperature (Ms) of steel based on its chemical composition (C, Mn, Si, Cr, Ni), linear regression allows us to quantify how changes in these elements influence Ms.
+
+
  $$ M_s = \beta_0 +\beta_1 C +\beta_2 Mn + \beta_3 Si + \beta_4 Cr + \beta_5 Ni $$
 
  
  $$M_s = 746.99 - 254.85 C - 24.24 Mn - 13.28 Si - 7.8 Cr - 14.64 Ni $$
  
-![Coefficients Image](C:/Users/LaptopUser/Documents/IDC6940_CrossValidation/coefficients.png)
 
 ***Statistics***
 
@@ -192,10 +206,15 @@ p-value: < 2.2e-16
 
 ## Cross Validation Results for Linear Regression
 
+The results of this analysis reveal that the models tested with 5-Fold Cross-Validation (5-Fold CV) and Leave-One-Out Cross-Validation (LOOCV) demonstrate impressive predictive accuracy. These two models consistently outshine the Nested CV model, indicating that they are more dependable for making predictions from the dataset.
+
 ![Linear Regression Cross-Validation](C:/Users/LaptopUser/Documents/IDC6940_CrossValidation/LR_CV.png)
 
 
 ## Support Vector Machines (SVM) for Regression (SVR)
+
+Support Vector Machines (SVM) are algorithms that model data by finding optimal boundaries, handling nonlinear patterns using kernels.
+Using our dataset, Support Vector Machines (SVM) with a radial kernel help predict the martensite start temperature (Ms) based on chemical elements like C, Mn, Ni, Si, and Cr. SVM works by finding the best way to capture the relationship between these variables, effectively handling complex patterns for accurate Ms predictions.
 
 ::: {.panel-tabset}
 
@@ -216,6 +235,8 @@ p-value: < 2.2e-16
 
 ## Model Comparision Results
 
+In this study, we compared the performance of Linear Regression and Support Vector Machine (SVM) models in predicting the martensite start temperature (Ms). Using 5-fold cross-validation, we found that SVM outperformed Linear Regression, achieving a lower MAE (~21 vs ~33), a higher R² (~0.9 vs ~0.55), and a lower RMSE (~25 vs ~48), highlighting its superior accuracy and reliability in making predictions.
+
 ![Model Comparison](C:/Users/LaptopUser/Documents/IDC6940_CrossValidation/ModelComparision.png)
 
 
@@ -223,6 +244,31 @@ p-value: < 2.2e-16
 
 ![Model Comparison Plot](C:/Users/LaptopUser/Documents/IDC6940_CrossValidation/ModelComparision_plot.png)
 
+## Conclusion: Overview
+
+### Evaluation of Two Models:
+
+Linear Regression Model
+
+Support Vector Machine Model
+
+### Cross-validation Methods Used:
+
+k-fold Cross-validation
+
+Leave-one-out Cross-validation (LOOCV)
+
+Nested Cross-validation
+
+## Conclusion: Key Findings
+
+- Mean Absolute Error (MAE): SVM performed much better, with a lower MAE (~21) compared to Linear Regression (~33), meaning SVM’s predictions were closer to the actual values.
+
+- R-squared (R²): SVM showed a significantly higher R² (~0.9) than Linear Regression (~0.55), indicating that SVM explained 90% of the data’s variability, while Linear Regression only accounted for about 55%.
+
+- Root Mean Squared Error (RMSE): SVM had a much lower RMSE (~25) compared to Linear Regression (~48), which reflects its greater accuracy and fewer large prediction errors.
+
+- Overall Performance: Across all key metrics, SVM outperformed Linear Regression, proving to be a more accurate and reliable model for predicting martensite start temperature (Ms).
 
 
 

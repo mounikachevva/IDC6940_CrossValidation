@@ -448,6 +448,7 @@ result_wide_df <- result_long_df %>%
   pivot_wider(names_from = Method, values_from = Result_Value) #%>% 
   
 result_wide_df %>% kable()
+
 ```
 
 ```{r Results, fig.cap="Figure 4: Cross-Validation Results: Linear Model"}
@@ -482,6 +483,8 @@ The results of this analysis [Figure 4: Cross-Validation Results: Linear Model](
 
 
 ##  Support Vector Machines (SVM) for Regression (SVR)
+
+Support Vector Machines (SVM) are powerful tools for tasks like classification and regression. They work by finding the best boundary to separate data into categories or fit data points for predictions. By using kernels, SVM can handle complex patterns, making them effective for challenging datasets.
 
 ```{r}
 
@@ -541,9 +544,9 @@ svr_kfold_r2 <- calculate_r2(test_data$Ms, svr_kfold_predictions) %>% round(2)
 
 Measure_of_Error <- c("RMSE", "MAE", "R2")
 Result_Value <- c(svr_kfold_rmse, svr_kfold_mae, svr_kfold_r2)
-svr_kfold_df <- data.frame(Measure_of_Error, Result_Value) 
+svm_kfold_df <- data.frame(Measure_of_Error, Result_Value) 
 
-svr_kfold_df %>% kable()
+svm_kfold_df %>% kable()
 
 
 ```
@@ -574,9 +577,9 @@ loocv_r2 <- cor(test_data$Ms, loocv_predictions)^2 %>% round(2)
 
 Measure_of_Error <- c("RMSE", "MAE", "R2")
 Result_Value <- c(loocv_rmse, loocv_mae, loocv_r2)
-loocv_df <- data.frame(Measure_of_Error, Result_Value) 
+svm_loocv_df <- data.frame(Measure_of_Error, Result_Value) 
 
-kable(loocv_df)
+kable(svm_loocv_df)
 
 
 ```
@@ -618,15 +621,41 @@ nested_cv_r2 <- mean(nested_cv_results[, 3]) %>% round(2)
 
 Measure_of_Error <- c("RMSE", "MAE", "R2")
 Result_Value <- c(nested_cv_rmse, nested_cv_mae, nested_cv_r2)
-nested_cv_df <- data.frame(Measure_of_Error, Result_Value)
+svm_nested_cv_df <- data.frame(Measure_of_Error, Result_Value)
 
-kable(nested_cv_df)
+kable(svm_nested_cv_df)
 
 
 ```
-## Table 
 
-### Model Comparision
+#### Comparative Analysis of Cross-Validation Results for Support Vector Machines (SVM) Regression Models
+
+```{r}
+library(tidyr)
+
+
+svm_kfold_results  <- svm_kfold_df %>% mutate(Method = "5-Fold") 
+svm_LOOCV_results  <- svm_loocv_df %>% mutate(Method = "LOOCV")
+svm_nested_results <- svm_nested_cv_df %>% mutate(Method = "Nested CV") 
+
+
+svm_result_long_df <- combine(svm_kfold_results, svm_LOOCV_results, svm_nested_results)
+
+result_wide_df <- svm_result_long_df %>% 
+  
+  pivot_wider(names_from = Method, values_from = Result_Value) #%>% 
+  
+result_wide_df %>% kable()
+
+```
+
+### Model Analysis of SVM Regression
+
+The model was evaluated using 5-Fold Cross-Validation, Leave-One-Out Cross-Validation (LOOCV), and Nested Cross-Validation. The 5-Fold Cross-Validation performed the best, showing the lowest RMSE (35.93), MAE (20.98), and highest R² (0.90), indicating strong accuracy. LOOCV had higher errors, with RMSE of 52.61, MAE of 28.49, and a lower R² of 0.79, suggesting less effectiveness. Nested CV provided balanced results, with RMSE of 40.09, MAE of 22.24, and R² of 0.86.
+
+
+
+## Model Comparision Results Table for Linear Regression & SVM Regression
 
 ```{r }
 
@@ -634,9 +663,12 @@ library(tidyr)
 
 Comparison_df <- rbind(
   Regression_R <- cbind(result_long_df, c(replicate(length(result_long_df),"Linear_Regression"))) %>% rename(Model=4),
-  SVM_KFold_R <- svr_kfold_df %>% mutate(Method = "5-Fold", Model = "SVM"),
-  SVM_LOOCV_R <- loocv_df %>% mutate(Method = "LOOCV", Model = "SVM"),
-  SVM_Nest_R  <- nested_cv_df %>% mutate(Method = "Nested CV", Model = "SVM")
+  
+  
+
+SVM_KFold_R <- svm_kfold_df %>% mutate(Method = "5-Fold", Model = "SVM"),
+ SVM_LOOCV_R <- svm_loocv_df %>% mutate(Method = "LOOCV", Model = "SVM"),
+ SVM_Nest_R  <- svm_nested_cv_df %>% mutate(Method = "Nested CV", Model = "SVM")
   ) 
 
 Comparison_df %>% 
@@ -646,7 +678,7 @@ Comparison_df %>%
 
 ```
 
-### Model Comparison Plot
+### Linear Regression & SVM Regression Model Comparison Plot
 
 ```{r Model-Comparison, fig.cap="Figure 5: Model Comparison: Linear Regression vs SVM (K-Fold CV, k=5)"}
 
@@ -654,7 +686,7 @@ library(ggplot2)
 library(dplyr)
 
 kfold_linear_df <- kfold_df %>% mutate(Model = "Linear Regression")
-kfold_svm_df <- svr_kfold_df %>% mutate(Model = "SVM")
+kfold_svm_df <- svm_kfold_df %>% mutate(Model = "SVM")
 
 comparison_df <- bind_rows(kfold_linear_df, kfold_svm_df)
 
@@ -673,5 +705,19 @@ ggsave(filename = "model_comparison_plot.png", plot = comparison_plot, width = 8
 
 ```
 For the martensite start temperature (Ms) dataset,the performance of Linear Regression and Support Vector Machine (SVM) models using three key metrics is compared [Figure 5: Model Comparison: Linear Regression vs SVM (K-Fold CV, k=5)](model_comparison_plot.png) : Mean Absolute Error (MAE), R-squared (R²), and Root Mean Squared Error (RMSE), evaluated with 5-fold cross-validation. The findings clearly show that the SVM model performs better than Linear Regression in all aspects. SVM achieved a notably lower MAE (~21) compared to Linear Regression (~33), meaning its predictions were closer to the actual values. The R² for SVM (~0.9) was much higher than Linear Regression (~0.55), indicating SVM explained 90% of the data's variance, whereas Linear Regression only captured about 55%. Additionally, SVM's RMSE (~25) was significantly lower than Linear Regression’s (~48), reflecting its greater accuracy and fewer large prediction errors. Overall, SVM proved to be the more suitable model for predicting martensite start temperature, delivering more accurate and reliable results for this dataset.
+
+## Conclusion
+
+In this study, we compared how well Linear Regression and Support Vector Machine (SVM) models predict the Martensite start temperature (Ms) using 5-fold cross-validation. Our results clearly show that SVM outperformed Linear Regression in every key metric: Mean Absolute Error (MAE), R-squared (R²), and Root Mean Squared Error (RMSE).
+
+SVM achieved a much lower MAE, meaning its predictions were closer to the actual values. It also delivered an R² of around 0.9, explaining 90% of the data's variability, while Linear Regression only explained about 55%. Furthermore, SVM's RMSE was significantly lower, indicating fewer large prediction errors and better overall accuracy.
+
+These findings highlight that SVM is a more effective and reliable method for predicting martensite start temperature. Its superior performance suggests it’s a powerful tool for understanding and predicting material properties in materials science. Moving forward, future work could focus on optimizing the SVM model through hyperparameter tuning and feature selection, further boosting its predictive accuracy.
+
+
+
+
+
+
 
 
