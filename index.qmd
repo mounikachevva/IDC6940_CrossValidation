@@ -708,7 +708,7 @@ For the martensite start temperature (Ms) dataset,the performance of Linear Regr
 
 ## Conclusion
 
-In this study, we compared how well Linear Regression and Support Vector Machine (SVM) models predict the Martensite start temperature (Ms) using 5-fold cross-validation. Our results clearly show that SVM outperformed Linear Regression in every key metric: Mean Absolute Error (MAE), R-squared (R²), and Root Mean Squared Error (RMSE).
+In this study, I compared how well Linear Regression and Support Vector Machine (SVM) models predict the Martensite start temperature (Ms) using 5-fold cross-validation. Our results clearly show that SVM outperformed Linear Regression in every key metric: Mean Absolute Error (MAE), R-squared (R²), and Root Mean Squared Error (RMSE).
 
 SVM achieved a much lower MAE, meaning its predictions were closer to the actual values. It also delivered an R² of around 0.9, explaining 90% of the data's variability, while Linear Regression only explained about 55%. Furthermore, SVM's RMSE was significantly lower, indicating fewer large prediction errors and better overall accuracy.
 
